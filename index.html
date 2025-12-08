@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Participação - Os Mais Mais</title>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .main-title {
+            font-size: 3em;
+            color: #fff;
+            text-shadow: 0 0 10px #00bfff, 0 0 20px #00bfff, 0 0 30px #00bfff;
+            margin-bottom: 40px;
+        }
+
+        .content-wrapper {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            flex-grow: 1;
+        }
+
+        #name-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        #main-content {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        #main-content .button-group {
+            display: flex;
+            gap: 20px;
+            flex-direction: column;
+            gap: 20px; /* O gap agora criará espaço vertical entre os botões */
+        }
+
+        #nameInput {
+            padding: 15px;
+            font-size: 18px;
+            border-radius: 25px;
+            border: 1px solid #555;
+            background-color: #333;
+            color: #fff;
+            width: 300px;
+            text-align: center;
+            outline: none;
+        }
+
+        .glowing-btn {
+            position: relative;
+            color: #fff;
+            padding: 20px 40px;
+            font-size: 24px;
+            border: none;
+            border-radius: 40px;
+            outline: none;
+            background: #007bff;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .glowing-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px #00bfff, 0 0 40px #00bfff, 0 0 80px #00bfff;
+        }
+
+        .glowing-btn-purple {
+            position: relative;
+            color: #fff;
+            padding: 20px 40px;
+            font-size: 24px;
+            border: none;
+            border-radius: 40px;
+            outline: none;
+            background: #8a2be2; /* Roxo */
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 20px;
+        }
+
+        .glowing-btn-purple:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px #9932cc, 0 0 40px #9932cc, 0 0 80px #9932cc;
+        }
+
+        .glowing-btn-orange {
+            position: relative;
+            color: #fff;
+            padding: 20px 40px;
+            font-size: 24px;
+            border: none;
+            border-radius: 40px;
+            outline: none;
+            background: #ff8c00; /* Laranja */
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .glowing-btn-orange:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px #ffa500, 0 0 40px #ffa500, 0 0 80px #ffa500;
+        }
+        .glowing-btn-red {
+            position: relative;
+            color: #fff;
+            padding: 20px 40px;
+            font-size: 24px;
+            border: none;
+            border-radius: 40px;
+            outline: none;
+            background: #dc3545; /* Vermelho */
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .glowing-btn-red:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px #ff4d4d, 0 0 40px #ff4d4d, 0 0 80px #ff4d4d;
+        }
+        #declineOptions {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        #loader {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        #loader p {
+            font-size: 18px;
+        }
+
+        #loader #percentage {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00bfff;
+        }
+        /* Estilos Aprimorados para o Loader */
+        .progress-ring-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .progress-ring__circle-bg {
+            stroke: #333; /* Fundo do círculo */
+        }
+
+        .progress-ring__circle {
+            stroke: #00bfff; /* Cor do progresso (azul) */
+            stroke-linecap: round; /* Bordas arredondadas */
+            transform-origin: 50% 50%;
+            transform: rotate(-90deg);
+            transition: stroke-dashoffset 0.1s linear;
+            filter: drop-shadow(0 0 5px #00bfff); /* Sombra para o efeito neon */
+            animation: pulse-blue 2s infinite ease-in-out; /* Animação de pulsação */
+        }
+
+        #loader-text {
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        @keyframes pulse-blue {
+            0%, 100% {
+                filter: drop-shadow(0 0 5px #00bfff);
+            }
+            50% {
+                filter: drop-shadow(0 0 15px #00bfff) drop-shadow(0 0 25px #00bfff);
+            }
+        }
+
+        #notification {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #28a745;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px #28a745;
+            font-size: 16px;
+        }
+
+        #declineOptions {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            border-radius: 10px; /* Adicionado border-radius */
+            background-color: rgba(255, 255, 255, 0.05); /* Fundo sutil */
+        }
+        
+        #feedbackMessage {
+            display: none;
+            text-align: center;
+            font-size: 20px;
+            padding: 20px 30px;
+            border-radius: 8px;
+            background-color: #333;
+            color: #00bfff; /* Cor de destaque */
+            box-shadow: 0 0 15px rgba(0, 191, 255, 0.5);
+        }
+        
+        .option-btn {
+            background-color: #333;
+            color: #fff;
+            border: 1px solid #555;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            width: 280px; /* Aumentado a largura */
+            font-size: 18px; /* Aumentado o tamanho da fonte */
+            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; /* Transição suave */
+            text-align: center;
+        }
+
+        .option-btn:hover {
+            background-color: #444;
+            border-color: #00bfff;
+            box-shadow: 0 0 8px rgba(0, 191, 255, 0.5);
+            text-align: center;
+        }
+
+        .glowing-btn-green {
+            position: relative;
+            color: #fff;
+            padding: 15px 30px;
+            font-size: 18px;
+            border: none;
+            border-radius: 30px;
+            outline: none;
+            background: #28a745; /* Verde */
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .glowing-btn-green:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 10px #32cd32, 0 0 40px #32cd32, 0 0 80px #32cd32;
+        }
+
+        footer {
+            position: absolute;
+            bottom: 10px;
+            font-size: 12px;
+            color: #555;
+        }
+
+        #partner-form-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        #partner-form-container input {
+            width: 300px;
+        }
+
+        #partner-error-message {
+            color: #ff4d4d;
+            display: none;
+        }
+
+        /* Estilos da Nova Notificação Animada */
+        .notification-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .notification-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .notification-box {
+            background: #2c2c2c;
+            padding: 30px 50px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            transform: scale(0.7);
+            transition: transform 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        }
+
+        .notification-overlay.show .notification-box {
+            transform: scale(1);
+        }
+
+        .notification-box h3 {
+            margin-top: 20px;
+            margin-bottom: 10px;
+            color: #4caf50;
+            font-size: 28px;
+        }
+
+        .notification-box p {
+            font-size: 18px;
+            color: #ddd;
+        }
+
+        /* Estilos para Notificação de Aviso (Vermelha) */
+        .notification-box.warning h3 {
+            color: #ff4d4d;
+            animation: blink-red 1s infinite;
+        }
+        .notification-box.warning .checkmark {
+            stroke: #ff4d4d;
+        }
+
+        /* Animação do Ícone de Check */
+        .checkmark {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: block;
+            stroke-width: 4;
+            stroke: #4caf50;
+            stroke-miterlimit: 10;
+            margin: 0 auto;
+            box-shadow: inset 0px 0px 0px #4caf50;
+        }
+
+        .checkmark-circle {
+            stroke-dasharray: 166;
+            stroke-dashoffset: 166;
+            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) 0.3s forwards;
+        }
+
+        .checkmark-check {
+            transform-origin: 50% 50%;
+            stroke-dasharray: 48;
+            stroke-dashoffset: 48;
+            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+        }
+
+        @keyframes stroke {
+            100% {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        @keyframes wave {
+            0%, 40%, 100% {
+                transform: translateY(0);
+            }
+            20% {
+                transform: translateY(-20px);
+            }
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-1px, 0, 0) scale(1); }
+            20%, 80% { transform: translate3d(2px, 0, 0) scale(1); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0) scale(1); }
+            40%, 60% { transform: translate3d(4px, 0, 0) scale(1); }
+        }
+
+        .notification-overlay.show .notification-box.warning {
+            animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        @keyframes blink-red {
+            0%, 100% { color: #ff4d4d; text-shadow: 0 0 10px #ff4d4d; }
+            50% { color: #ff8a8a; text-shadow: none; }
+        }
+
+
+    </style>
+</head>
+<body>
+
+    <h1 class="main-title">Participação - Os Mais Mais</h1>
+
+    <div class="content-wrapper">
+        <div id="name-container">
+            <h2>Bem-vindo(a)! Qual é o seu nome?</h2>
+            <input type="text" id="nameInput" placeholder="Digite seu nome aqui">
+            <button id="confirmNameButton" class="glowing-btn">Confirmar</button>
+        </div>
+
+        <div id="main-content">
+            <h2 id="welcomeMessage"></h2>
+            <div class="button-group">
+                <button id="actionButton" class="glowing-btn">Participar</button>
+                <button id="partnerButton" class="glowing-btn-orange">Escolher um Parceiro</button>
+                <button id="declineButton" class="glowing-btn-purple">Não quero participar</button>
+                <button id="blockButton" class="glowing-btn-red">Bloquear Pessoas</button>
+            </div>
+        </div>
+
+        <div id="partner-form-container">
+            <h2>Dados do Parceiro</h2>
+            <input type="text" id="partnerNameInput" class="option-btn" placeholder="Nome do parceiro">
+            <input type="number" id="partnerAgeInput" class="option-btn" placeholder="Idade do parceiro">
+            <div id="partner-error-message">A idade não pode ser 30 anos ou mais.</div>
+            <button id="partnerConfirmButton" class="glowing-btn-green">Concluir</button>
+        </div>
+
+
+        <div id="declineOptions" style="display: none;">
+            <div id="optionChato" class="option-btn">1. muito chato</div>
+            <div id="optionNaoSei" class="option-btn">2. nao sei o que e</div>
+            <button id="supportButton" class="glowing-btn-green">falar com o support</button>
+        </div>
+
+        <div id="loader">
+            <div class="progress-ring-container">
+                <svg class="progress-ring" width="120" height="120">
+                   <circle class="progress-ring__circle-bg" stroke-width="8" fill="transparent" r="52" cx="60" cy="60"/>
+                   <circle class="progress-ring__circle" stroke-width="8" fill="transparent" r="52" cx="60" cy="60"/>
+                </svg>
+                <span id="percentage">0%</span>
+            </div>
+            <p id="loader-text">Analisando seus dados...</p>
+        </div>
+
+        <div id="feedbackMessage" style="display: none;">
+            Obrigado pelo Feedback!
+        </div>
+    </div>
+
+    <div id="notification" style="display: none;">
+        Você já está participando!
+    </div>
+
+    <div id="animated-notification" class="notification-overlay">
+        <div class="notification-box">
+            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52"><circle class="checkmark-circle" cx="26" cy="26" r="25" fill="none"/><path class="checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/></svg>
+            <h3 id="notification-title">Sucesso!</h3>
+            <p id="notification-message">Sua ação foi concluída.</p>
+        </div>
+    </div>
+
+    <footer>
+        Criado por do @lucaspedro
+    </footer>
+
+    <script>
+        const nameContainer = document.getElementById('name-container');
+        const nameInput = document.getElementById('nameInput');
+        const confirmNameButton = document.getElementById('confirmNameButton');
+        const mainContent = document.getElementById('main-content');
+        const welcomeMessage = document.getElementById('welcomeMessage');
+        const actionButton = document.getElementById('actionButton');
+        const partnerButton = document.getElementById('partnerButton');
+        const blockButton = document.getElementById('blockButton');
+        const partnerFormContainer = document.getElementById('partner-form-container');
+        const partnerNameInput = document.getElementById('partnerNameInput');
+        const partnerAgeInput = document.getElementById('partnerAgeInput');
+        const partnerConfirmButton = document.getElementById('partnerConfirmButton');
+        const partnerErrorMessage = document.getElementById('partner-error-message');
+        const loader = document.getElementById('loader');
+        const percentageText = document.getElementById('percentage');
+        const notification = document.getElementById('notification');
+        const declineButton = document.getElementById('declineButton');
+        const declineOptions = document.getElementById('declineOptions');
+        const optionChato = document.getElementById('optionChato');
+        const optionNaoSei = document.getElementById('optionNaoSei'); // Adicionado para consistência, mesmo sem ação específica
+        const supportButton = document.getElementById('supportButton');
+        const feedbackMessage = document.getElementById('feedbackMessage');
+        const animatedNotification = document.getElementById('animated-notification');
+        const progressCircle = document.querySelector('.progress-ring__circle');
+        const loaderText = document.getElementById('loader-text');
+
+        function resetPage() {
+            // Esconde todos os elementos de interação
+            loader.style.display = 'none';
+            notification.style.display = 'none';
+            declineOptions.style.display = 'none';
+            feedbackMessage.style.display = 'none';
+            partnerFormContainer.style.display = 'none';
+            // Mostra o conteúdo principal
+            mainContent.style.display = 'flex';
+        }
+
+        function showAnimatedNotification(title, message, type = 'success') {
+            const notificationBox = animatedNotification.querySelector('.notification-box');
+            document.getElementById('notification-title').textContent = title;
+            document.getElementById('notification-message').textContent = message;
+
+            // Remove classes antigas e adiciona a nova
+            notificationBox.classList.remove('success', 'warning');
+            if (type === 'warning') {
+                notificationBox.classList.add('warning');
+            } else {
+                notificationBox.classList.add('success'); // Classe padrão
+            }
+
+            const checkmark = animatedNotification.querySelector('.checkmark');
+            const newCheckmark = checkmark.cloneNode(true);
+            checkmark.parentNode.replaceChild(newCheckmark, checkmark);
+
+            animatedNotification.classList.add('show');
+            setTimeout(() => {
+                animatedNotification.classList.remove('show');
+            }, 2700); // Deixa a notificação visível por 2.7s
+        }
+
+        function showMainContent(name) {
+            nameContainer.style.display = 'none';
+            welcomeMessage.textContent = `Olá, ${name}!`;
+            mainContent.style.display = 'flex'; /* Mantém flex para que as propriedades do CSS funcionem */
+        }
+
+        // Verifica se o nome já está salvo no carregamento da página
+        window.addEventListener('load', () => {
+            const savedName = localStorage.getItem('userName');
+            if (savedName) {
+                showMainContent(savedName);
+            } else {
+                nameContainer.style.display = 'flex';
+            }
+        });
+
+        confirmNameButton.addEventListener('click', () => {
+            const userName = nameInput.value.trim();
+            if (userName) {
+                localStorage.setItem('userName', userName);
+                showMainContent(userName);
+            }
+        });
+
+        function resetPage() {
+            // Esconde todos os elementos de interação
+            loader.style.display = 'none';
+            notification.style.display = 'none';
+            declineOptions.style.display = 'none';
+            feedbackMessage.style.display = 'none';
+            partnerFormContainer.style.display = 'none';
+            // Mostra o conteúdo principal
+            mainContent.style.display = 'flex';
+        }
+
+        actionButton.addEventListener('click', () => {
+            mainContent.style.display = 'none';
+            loader.style.display = 'flex';
+
+            const loadingMessages = [
+                "Analisando seus dados...",
+                "Verificando compatibilidade...",
+                "Otimizando parâmetros...",
+                "Finalizando..."
+            ];
+            let messageIndex = 0;
+            loaderText.textContent = loadingMessages[messageIndex];
+
+            const messageInterval = setInterval(() => {
+                messageIndex = (messageIndex + 1) % loadingMessages.length;
+                loaderText.style.opacity = 0;
+                setTimeout(() => { loaderText.textContent = loadingMessages[messageIndex]; loaderText.style.opacity = 1; }, 500);
+            }, 2500);
+
+            const radius = progressCircle.r.baseVal.value;
+            const circumference = 2 * Math.PI * radius;
+            progressCircle.style.strokeDasharray = `${circumference} ${circumference}`;
+            progressCircle.style.strokeDashoffset = circumference;
+
+            let percentage = 0;
+            const interval = setInterval(() => {
+                percentage++;
+                percentageText.textContent = percentage + '%';
+                const offset = circumference - (percentage / 100) * circumference;
+                progressCircle.style.strokeDashoffset = offset;
+                if (percentage >= 100) {
+                    clearInterval(interval);
+                    clearInterval(messageInterval);
+                }
+            }, 100); // 100ms * 100 = 10000ms = 10 segundos
+
+            setTimeout(() => {
+                loader.style.display = 'none';
+                clearInterval(messageInterval); // Garante que o intervalo de mensagens pare
+                showAnimatedNotification('Sucesso!', 'Você já está participando!');
+                setTimeout(() => {
+                    resetPage();
+                }, 3000); // Volta ao início após 3 segundos
+            }, 10000); // 10 segundos para o loader
+        });
+
+        declineButton.addEventListener('click', () => {
+            mainContent.style.display = 'none';
+            declineOptions.style.display = 'flex';
+        });
+
+        partnerButton.addEventListener('click', () => {
+            mainContent.style.display = 'none';
+            partnerFormContainer.style.display = 'flex';
+        });
+
+        partnerConfirmButton.addEventListener('click', () => {
+            const age = parseInt(partnerAgeInput.value, 10);
+            const name = partnerNameInput.value.trim();
+
+            partnerErrorMessage.style.display = 'none'; // Esconde a mensagem de erro
+
+            if (age >= 30) {
+                partnerErrorMessage.style.display = 'block';
+            } else if (name && age) {
+                partnerFormContainer.style.display = 'none';
+                showAnimatedNotification('Concluído!', 'Parceiro adicionado com sucesso!');
+                setTimeout(() => {
+                    resetPage();
+                }, 3000);
+            }
+        });
+
+        optionChato.addEventListener('click', () => {
+            declineOptions.style.display = 'none';
+            showAnimatedNotification('Obrigado!', 'Seu feedback foi enviado.');
+            setTimeout(() => {
+                resetPage();
+            }, 3000); // Volta ao início após 3 segundos
+        });
+
+        optionNaoSei.addEventListener('click', () => {
+            declineOptions.style.display = 'none';
+            showAnimatedNotification('Aviso', 'Por favor, contrate um Support.', 'warning');
+            setTimeout(() => {
+                resetPage();
+            }, 3000);
+        });
+
+        supportButton.addEventListener('click', () => {
+            declineOptions.style.display = 'none';
+            showAnimatedNotification('Aviso', 'O support só ta disponível as 20h', 'warning');
+            setTimeout(() => {
+                resetPage();
+            }, 3000);
+        });
+
+        blockButton.addEventListener('click', () => {
+            mainContent.style.display = 'none';
+            showAnimatedNotification('Aviso', 'Função de bloqueio indisponível no momento.', 'warning');
+            setTimeout(() => {
+                resetPage();
+            }, 3000);
+        });
+    </script>
+
+</body>
+</html>
