@@ -141,6 +141,11 @@
             box-shadow: 0 0 15px var(--danger-color), 0 0 30px var(--danger-color);
         }
 
+        .btn-warning {
+            background: var(--warning-color);
+        }
+        .btn-warning:hover { box-shadow: 0 0 15px var(--warning-color), 0 0 30px var(--warning-color); }
+
         #declineOptions {
             display: none;
             flex-direction: column;
@@ -305,29 +310,6 @@
         }
         #blocked-users-list .unblock-btn { background: var(--success-color); color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
 
-        #visitors-list-container {
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-            background-color: rgba(30, 30, 47, 0.7);
-            padding: 20px; border-radius: 15px; backdrop-filter: blur(5px);
-        }
-
-        #visitors-list {
-            list-style: none;
-            padding: 0;
-            width: 100%;
-            max-width: 320px;
-            text-align: center;
-            max-height: 250px;
-            overflow-y: auto;
-            padding-right: 5px;
-        }
-        #visitors-list li {
-            background-color: var(--light-bg); padding: 10px; margin-bottom: 5px; border-radius: 5px; border: 1px solid var(--border-color);
-        }
-
         /* Estilos da Nova Notificação Animada */
         .notification-overlay {
             position: fixed;
@@ -382,6 +364,14 @@
             animation: blink-red 1.5s infinite;
         }
         .notification-box.warning .checkmark {
+            stroke: #ff4d4d;
+        }
+
+        /* Estilos para Notificação de Informação (Amarela) */
+        .notification-box.info h3 {
+            color: var(--warning-color);
+        }
+        .notification-box.info .checkmark {
             stroke: #ff4d4d;
         }
 
@@ -481,6 +471,12 @@
 </head>
 <body>
 
+    <div id="maintenance-container" style="display: none;">
+        <h1>Site em Manutenção</h1>
+        <p>Estamos trabalhando para melhorar sua experiência. Voltamos em breve!</p>
+    </div>
+
+
     <h1 class="main-title">Participação - Os Mais Mais</h1>
 
     <div class="content-wrapper">
@@ -497,7 +493,7 @@
                 <button id="partnerButton" class="btn btn-orange">Escolher um Parceiro</button>
                 <button id="declineButton" class="btn btn-purple">Não quero participar</button>
                 <button id="blockButton" class="btn btn-red">Bloquear Pessoas</button>
-                <button id="visitorsButton" class="btn btn-primary" style="display: none;">Ver Visitantes</button>
+                <button id="maintenanceButton" class="btn btn-warning" style="display: none;">Manutenção</button>
             </div>
         </div>
 
@@ -526,12 +522,6 @@
             <div id="optionNaoSei" class="option-btn">2 Não sei o que e</div>
             <button id="supportButton" class="btn-green">falar com o suporte</button>
             <button id="backFromDeclineButton" class="btn btn-primary" style="margin-top: 10px;">Voltar</button>
-        </div>
-
-        <div id="visitors-list-container" style="display: none;">
-            <h2>Visitantes</h2>
-            <ul id="visitors-list"></ul>
-            <button id="backFromVisitorsButton" class="btn btn-primary">Voltar</button>
         </div>
 
         <div id="loader">
@@ -568,7 +558,7 @@
         const welcomeMessage = document.getElementById('welcomeMessage');
         const actionButton = document.getElementById('actionButton');
         const partnerButton = document.getElementById('partnerButton');
-        const visitorsButton = document.getElementById('visitorsButton');
+        const maintenanceButton = document.getElementById('maintenanceButton');
         const blockButton = document.getElementById('blockButton');
         const partnerFormContainer = document.getElementById('partner-form-container');
         const partnerNameInput = document.getElementById('partnerNameInput');
@@ -592,9 +582,7 @@
         const blockedUsersList = document.getElementById('blocked-users-list');
         const backFromBlockButton = document.getElementById('backFromBlockButton');
         const blockedListTitle = document.getElementById('blocked-list-title');
-        const visitorsListContainer = document.getElementById('visitors-list-container');
-        const visitorsList = document.getElementById('visitors-list');
-        const backFromVisitorsButton = document.getElementById('backFromVisitorsButton');
+        const maintenanceContainer = document.getElementById('maintenance-container');
 
         function getBlockedUsers() {
             return JSON.parse(localStorage.getItem('blockedUsers') || '[]');
@@ -604,22 +592,12 @@
             localStorage.setItem('blockedUsers', JSON.stringify(users));
         }
 
-        function getVisitedUsers() {
-            return JSON.parse(localStorage.getItem('visitedUsers') || '[]');
-        }
-
-        function saveVisitedUsers(users) {
-            localStorage.setItem('visitedUsers', JSON.stringify(users));
-        }
-
         function resetPage() {
             // Esconde todos os elementos de interação
             loader.style.display = 'none';
             notification.style.display = 'none';
             declineOptions.style.display = 'none';
             blockListContainer.style.display = 'none';
-            visitorsListContainer.style.display = 'none';
-            visitorsListContainer.classList.remove('fade-in-up');
             blockListContainer.classList.remove('fade-in-up');
             feedbackMessage.style.display = 'none';
             partnerFormContainer.style.display = 'none';
@@ -634,9 +612,11 @@
             document.getElementById('notification-message').textContent = message;
 
             // Remove classes antigas e adiciona a nova
-            notificationBox.classList.remove('success', 'warning');
+            notificationBox.classList.remove('success', 'warning', 'info');
             if (type === 'warning') {
                 notificationBox.classList.add('warning');
+            } else if (type === 'info') {
+                notificationBox.classList.add('info');
             } else {
                 notificationBox.classList.add('success'); // Classe padrão
             }
@@ -658,10 +638,11 @@
             mainContent.classList.add('fade-in-up');
 
             // Mostra o botão de visitantes apenas para o admin
-            if (name.toLowerCase() === 'lucaspedro') {
-                visitorsButton.style.display = 'block';
+            const isAdmin = name.toLowerCase() === 'lucaspedro';
+            if (isAdmin) {
+                maintenanceButton.style.display = 'block';
             } else {
-                visitorsButton.style.display = 'none';
+                maintenanceButton.style.display = 'none';
             }
         }
 
@@ -669,25 +650,32 @@
         window.addEventListener('load', () => {
             const savedName = localStorage.getItem('userName');
             if (savedName) {
+                const isAdmin = savedName.toLowerCase() === 'lucaspedro';
+                const maintenanceMode = localStorage.getItem('maintenanceMode') === 'on';
+
+                if (maintenanceMode && !isAdmin) {
+                    // Se manutenção está ON e não é admin, mostra a tela de manutenção
+                    document.querySelector('.content-wrapper').style.display = 'none';
+                    document.querySelector('.main-title').style.display = 'none';
+                    document.querySelector('footer').style.display = 'none';
+                    maintenanceContainer.style.display = 'flex';
+                    return; // Para a execução
+                }
+            }
+            // Se não estiver em manutenção ou se for admin, continua normal
+            if (savedName) {
                 showMainContent(savedName);
             } else {
-                nameContainer.style.display = 'flex'; // Já tem a classe de animação no HTML
+                nameContainer.style.display = 'flex';
+                showAnimatedNotification('Atenção!', 'Escolha seu nome apenas 1 vez.', 'info');
             }
         });
-
         confirmNameButton.addEventListener('click', () => {
             const userName = nameInput.value.trim();
             if (userName) {
                 localStorage.setItem('userName', userName);
-
-                // Adiciona à lista de visitantes se não existir
-                const visited = getVisitedUsers();
-                if (!visited.includes(userName)) {
-                    visited.push(userName);
-                    saveVisitedUsers(visited);
-                }
-
-                showMainContent(userName);
+                // Recarrega a página para aplicar a lógica de manutenção corretamente
+                window.location.reload();
             }
         });
 
@@ -845,32 +833,18 @@
             resetPage();
         });
 
-        function renderVisitedUsers() {
-            const visitedUsers = getVisitedUsers();
-            visitorsList.innerHTML = '';
-            if (visitedUsers.length > 0) {
-                visitedUsers.forEach(user => {
-                    const li = document.createElement('li');
-                    li.textContent = user;
-                    visitorsList.appendChild(li);
-                });
+        maintenanceButton.addEventListener('click', () => {
+            const maintenanceMode = localStorage.getItem('maintenanceMode');
+            if (maintenanceMode === 'on') {
+                localStorage.setItem('maintenanceMode', 'off');
+                showAnimatedNotification('Manutenção Desativada', 'O site está online para todos.', 'success');
             } else {
-                const li = document.createElement('li');
-                li.textContent = "Nenhum visitante ainda.";
-                visitorsList.appendChild(li);
+                localStorage.setItem('maintenanceMode', 'on');
+                showAnimatedNotification('Manutenção Ativada', 'Apenas você pode acessar o site.', 'warning');
             }
-        }
-
-        visitorsButton.addEventListener('click', () => {
-            mainContent.style.display = 'none';
-            mainContent.classList.remove('fade-in-up');
-            visitorsListContainer.style.display = 'flex';
-            visitorsListContainer.classList.add('fade-in-up');
-            renderVisitedUsers();
-        });
-
-        backFromVisitorsButton.addEventListener('click', () => {
-            resetPage();
+            setTimeout(() => {
+                window.location.reload();
+            }, 3000);
         });
     </script>
 
