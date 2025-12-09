@@ -4,25 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Participação - Os Mais Mais</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #6a5acd; /* Roxo Azulado (SlateBlue) */
+            --secondary-color: #007bff; /* Azul Brilhante */
+            --dark-blue-color: #0056b3; /* Azul Escuro */
+            --success-color: #28a745; /* Verde */
+            --warning-color: #ff8c00; /* Laranja */
+            --danger-color: #dc3545; /* Vermelho */
+            --dark-bg: #12121f;
+            --light-bg: #1e1e2f;
+            --text-color: #e0e0e0;
+            --text-light: #ffffff;
+            --border-color: #333;
+        }
+
         body {
             background-color: #000;
-            color: #fff;
-            font-family: sans-serif;
+            color: var(--text-color);
+            font-family: 'Poppins', sans-serif;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
-            overflow: hidden;
         }
 
         .main-title {
             font-size: 3em;
-            color: #fff;
-            text-shadow: 0 0 10px #00bfff, 0 0 20px #00bfff, 0 0 30px #00bfff;
+            font-weight: 700;
+            color: var(--text-light);
+            text-shadow: 0 0 10px rgba(106, 90, 205, 0.7);
             margin-bottom: 40px;
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.7s ease-out forwards;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .content-wrapper {
@@ -50,99 +76,71 @@
         #main-content .button-group {
             display: flex;
             gap: 20px;
-            flex-direction: column;
-            gap: 20px; /* O gap agora criará espaço vertical entre os botões */
+            flex-direction: column; 
+        }
+
+        .button-group-horizontal {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
         }
 
         #nameInput {
             padding: 15px;
             font-size: 18px;
             border-radius: 25px;
-            border: 1px solid #555;
-            background-color: #333;
-            color: #fff;
+            border: 1px solid var(--border-color);
+            background-color: var(--light-bg);
+            color: var(--text-light);
             width: 300px;
             text-align: center;
             outline: none;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
         }
 
-        .glowing-btn {
+        #nameInput:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 15px var(--primary-color);
+        }
+
+        .btn {
             position: relative;
-            color: #fff;
+            color: var(--text-light);
+            background: var(--dark-blue-color);
             padding: 20px 40px;
-            font-size: 24px;
+            font-size: 20px;
+            font-weight: 600;
             border: none;
             border-radius: 40px;
             outline: none;
-            background: #007bff;
             cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
             text-transform: uppercase;
             letter-spacing: 2px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .glowing-btn:hover {
+        .btn:hover {
             transform: scale(1.05);
-            box-shadow: 0 0 10px #00bfff, 0 0 40px #00bfff, 0 0 80px #00bfff;
+            box-shadow: 0 0 15px var(--dark-blue-color), 0 0 30px var(--dark-blue-color);
         }
 
-        .glowing-btn-purple {
-            position: relative;
-            color: #fff;
-            padding: 20px 40px;
-            font-size: 24px;
-            border: none;
-            border-radius: 40px;
-            outline: none;
-            background: #8a2be2; /* Roxo */
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 2px;
+        .btn-primary {
+            /* Herda o estilo do .btn */
+        }
+
+        .btn-purple {
             margin-top: 20px;
         }
 
-        .glowing-btn-purple:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 10px #9932cc, 0 0 40px #9932cc, 0 0 80px #9932cc;
+        .btn-red {
+            background: var(--danger-color);
+            border-color: var(--danger-color);
+        }
+        .btn-red:hover {
+            box-shadow: 0 0 15px var(--danger-color), 0 0 30px var(--danger-color);
         }
 
-        .glowing-btn-orange {
-            position: relative;
-            color: #fff;
-            padding: 20px 40px;
-            font-size: 24px;
-            border: none;
-            border-radius: 40px;
-            outline: none;
-            background: #ff8c00; /* Laranja */
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-        .glowing-btn-orange:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 10px #ffa500, 0 0 40px #ffa500, 0 0 80px #ffa500;
-        }
-        .glowing-btn-red {
-            position: relative;
-            color: #fff;
-            padding: 20px 40px;
-            font-size: 24px;
-            border: none;
-            border-radius: 40px;
-            outline: none;
-            background: #dc3545; /* Vermelho */
-            cursor: pointer;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-        .glowing-btn-red:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 10px #ff4d4d, 0 0 40px #ff4d4d, 0 0 80px #ff4d4d;
-        }
         #declineOptions {
             display: none;
             flex-direction: column;
@@ -158,55 +156,31 @@
             gap: 20px;
         }
 
-        #loader p {
-            font-size: 18px;
-        }
-
-        #loader #percentage {
-            font-size: 24px;
-            font-weight: bold;
-            color: #00bfff;
-        }
-        /* Estilos Aprimorados para o Loader */
-        .progress-ring-container {
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .progress-ring__circle-bg {
-            stroke: #333; /* Fundo do círculo */
-        }
-
-        .progress-ring__circle {
-            stroke: #00bfff; /* Cor do progresso (azul) */
-            stroke-linecap: round; /* Bordas arredondadas */
-            transform-origin: 50% 50%;
-            transform: rotate(-90deg);
-            transition: stroke-dashoffset 0.1s linear;
-            filter: drop-shadow(0 0 5px #00bfff); /* Sombra para o efeito neon */
-            animation: pulse-blue 2s infinite ease-in-out; /* Animação de pulsação */
+        /* Novo estilo de Spinner */
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 8px solid var(--border-color);
+            border-top: 8px solid var(--dark-blue-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
         }
 
         #loader-text {
+            font-size: 18px;
             transition: opacity 0.5s ease-in-out;
         }
 
-        @keyframes pulse-blue {
-            0%, 100% {
-                filter: drop-shadow(0 0 5px #00bfff);
-            }
-            50% {
-                filter: drop-shadow(0 0 15px #00bfff) drop-shadow(0 0 25px #00bfff);
-            }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         #notification {
             display: none;
             position: fixed;
             top: 20px;
-            right: 20px;
+            right: 20px; /* Este pode ser removido, pois a nova notificação é centralizada */
             background-color: #28a745;
             color: white;
             padding: 15px;
@@ -221,8 +195,9 @@
             align-items: center;
             gap: 15px;
             padding: 20px;
-            border-radius: 10px; /* Adicionado border-radius */
-            background-color: rgba(255, 255, 255, 0.05); /* Fundo sutil */
+            border-radius: 15px;
+            background-color: rgba(30, 30, 47, 0.7);
+            backdrop-filter: blur(5px);
         }
         
         #feedbackMessage {
@@ -231,62 +206,67 @@
             font-size: 20px;
             padding: 20px 30px;
             border-radius: 8px;
-            background-color: #333;
-            color: #00bfff; /* Cor de destaque */
-            box-shadow: 0 0 15px rgba(0, 191, 255, 0.5);
+            background-color: var(--light-bg);
+            color: var(--dark-blue-color);
+            box-shadow: 0 0 15px var(--dark-blue-color);
         }
         
         .option-btn {
-            background-color: #333;
-            color: #fff;
-            border: 1px solid #555;
+            background-color: var(--light-bg);
+            color: var(--text-light);
+            border: 1px solid var(--border-color);
             padding: 10px 20px;
             border-radius: 25px;
             cursor: pointer;
-            width: 280px; /* Aumentado a largura */
-            font-size: 18px; /* Aumentado o tamanho da fonte */
-            transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease; /* Transição suave */
+            width: 280px;
+            font-size: 16px;
+            transition: all 0.3s ease;
             text-align: center;
+            font-family: 'Poppins', sans-serif;
         }
 
         .option-btn:hover {
             background-color: #444;
-            border-color: #00bfff;
-            box-shadow: 0 0 8px rgba(0, 191, 255, 0.5);
-            text-align: center;
+            border-color: var(--dark-blue-color);
+            box-shadow: 0 0 8px var(--dark-blue-color);
         }
 
-        .glowing-btn-green {
-            position: relative;
-            color: #fff;
+        .btn-green {
+            color: var(--text-light);
             padding: 15px 30px;
             font-size: 18px;
+            font-weight: 600;
             border: none;
             border-radius: 30px;
             outline: none;
-            background: #28a745; /* Verde */
+            background: var(--dark-blue-color);
             cursor: pointer;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             text-transform: uppercase;
             letter-spacing: 2px;
         }
 
-        .glowing-btn-green:hover {
+        .btn-orange { background: var(--dark-blue-color); }
+        .btn-orange:hover { box-shadow: 0 0 15px var(--dark-blue-color), 0 0 30px var(--dark-blue-color); }
+
+        .btn-green:hover {
             transform: scale(1.05);
-            box-shadow: 0 0 10px #32cd32, 0 0 40px #32cd32, 0 0 80px #32cd32;
+            box-shadow: 0 0 15px var(--success-color), 0 0 30px var(--success-color);
         }
 
         footer {
-            position: absolute;
-            bottom: 10px;
+            margin-top: 20px; /* Adicionado para espaçamento */
+            padding-bottom: 10px;
             font-size: 12px;
-            color: #555;
+            color: var(--text-color); /* Cor ajustada para o tema */
         }
 
         #partner-form-container {
             display: none;
             flex-direction: column;
             align-items: center;
+            background-color: rgba(30, 30, 47, 0.7);
+            padding: 20px; border-radius: 15px; backdrop-filter: blur(5px);
             gap: 15px;
         }
 
@@ -295,8 +275,57 @@
         }
 
         #partner-error-message {
-            color: #ff4d4d;
+            color: var(--danger-color);
             display: none;
+        }
+
+        #block-list-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            background-color: rgba(30, 30, 47, 0.7);
+            padding: 20px; border-radius: 15px; backdrop-filter: blur(5px);
+        }
+
+        #blocked-users-list {
+            list-style: none;
+            padding: 0;
+            width: 100%;
+            max-width: 320px;
+            text-align: center;
+            max-height: 150px; /* Altura máxima antes de rolar */
+            overflow-y: auto;  /* Adiciona barra de rolagem vertical quando necessário */
+            padding-right: 5px; /* Espaço para a barra de rolagem */
+        }
+        #blocked-users-list li {
+            background-color: var(--light-bg);
+            padding: 10px; margin-bottom: 5px; border-radius: 5px; border: 1px solid var(--border-color);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        #blocked-users-list .unblock-btn { background: var(--success-color); color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; }
+
+        #visitors-list-container {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            background-color: rgba(30, 30, 47, 0.7);
+            padding: 20px; border-radius: 15px; backdrop-filter: blur(5px);
+        }
+
+        #visitors-list {
+            list-style: none;
+            padding: 0;
+            width: 100%;
+            max-width: 320px;
+            text-align: center;
+            max-height: 250px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        #visitors-list li {
+            background-color: var(--light-bg); padding: 10px; margin-bottom: 5px; border-radius: 5px; border: 1px solid var(--border-color);
         }
 
         /* Estilos da Nova Notificação Animada */
@@ -322,7 +351,7 @@
         }
 
         .notification-box {
-            background: #2c2c2c;
+            background: var(--light-bg);
             padding: 30px 50px;
             border-radius: 20px;
             text-align: center;
@@ -338,19 +367,19 @@
         .notification-box h3 {
             margin-top: 20px;
             margin-bottom: 10px;
-            color: #4caf50;
+            color: var(--success-color);
             font-size: 28px;
         }
 
         .notification-box p {
             font-size: 18px;
-            color: #ddd;
+            color: var(--text-color);
         }
 
         /* Estilos para Notificação de Aviso (Vermelha) */
         .notification-box.warning h3 {
-            color: #ff4d4d;
-            animation: blink-red 1s infinite;
+            color: var(--danger-color);
+            animation: blink-red 1.5s infinite;
         }
         .notification-box.warning .checkmark {
             stroke: #ff4d4d;
@@ -363,7 +392,7 @@
             border-radius: 50%;
             display: block;
             stroke-width: 4;
-            stroke: #4caf50;
+            stroke: var(--success-color);
             stroke-miterlimit: 10;
             margin: 0 auto;
             box-shadow: inset 0px 0px 0px #4caf50;
@@ -409,10 +438,44 @@
         }
 
         @keyframes blink-red {
-            0%, 100% { color: #ff4d4d; text-shadow: 0 0 10px #ff4d4d; }
-            50% { color: #ff8a8a; text-shadow: none; }
+            0%, 100% { color: var(--danger-color); text-shadow: 0 0 10px var(--danger-color); }
+            50% { color: #ff7b7b; text-shadow: none; } /* Um tom mais claro de vermelho */
         }
 
+        /* --- Media Queries para Responsividade --- */
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2.2em;
+                text-align: center;
+                margin-bottom: 30px;
+            }
+
+            .content-wrapper {
+                padding: 0 20px;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            #nameInput, .option-btn, #partner-form-container input {
+                width: 90%;
+                max-width: 320px;
+            }
+
+            .btn {
+                font-size: 16px;
+                padding: 15px 25px;
+            }
+
+            .notification-box {
+                width: 90%;
+                padding: 25px;
+            }
+
+            footer {
+                position: relative;
+                margin-top: 30px;
+            }
+        }
 
     </style>
 </head>
@@ -421,45 +484,58 @@
     <h1 class="main-title">Participação - Os Mais Mais</h1>
 
     <div class="content-wrapper">
-        <div id="name-container">
+        <div id="name-container" class="fade-in-up">
             <h2>Bem-vindo(a)! Qual é o seu nome?</h2>
             <input type="text" id="nameInput" placeholder="Digite seu nome aqui">
-            <button id="confirmNameButton" class="glowing-btn">Confirmar</button>
+            <button id="confirmNameButton" class="btn btn-primary">Confirmar</button>
         </div>
 
         <div id="main-content">
             <h2 id="welcomeMessage"></h2>
             <div class="button-group">
-                <button id="actionButton" class="glowing-btn">Participar</button>
-                <button id="partnerButton" class="glowing-btn-orange">Escolher um Parceiro</button>
-                <button id="declineButton" class="glowing-btn-purple">Não quero participar</button>
-                <button id="blockButton" class="glowing-btn-red">Bloquear Pessoas</button>
+                <button id="actionButton" class="btn btn-primary">Participar</button>
+                <button id="partnerButton" class="btn btn-orange">Escolher um Parceiro</button>
+                <button id="declineButton" class="btn btn-purple">Não quero participar</button>
+                <button id="blockButton" class="btn btn-red">Bloquear Pessoas</button>
+                <button id="visitorsButton" class="btn btn-primary" style="display: none;">Ver Visitantes</button>
             </div>
         </div>
 
         <div id="partner-form-container">
             <h2>Dados do Parceiro</h2>
             <input type="text" id="partnerNameInput" class="option-btn" placeholder="Nome do parceiro">
-            <input type="number" id="partnerAgeInput" class="option-btn" placeholder="Idade do parceiro">
+            <input type="number" id="partnerAgeInput" class="option-btn" placeholder="Idade do parceiro" min="1">
             <div id="partner-error-message">A idade não pode ser 30 anos ou mais.</div>
-            <button id="partnerConfirmButton" class="glowing-btn-green">Concluir</button>
+            <div class="button-group-horizontal">
+                <button id="partnerConfirmButton" class="btn-green">Concluir</button>
+                <button id="backFromPartnerButton" class="btn btn-primary">Voltar</button>
+            </div>
         </div>
 
+        <div id="block-list-container">
+            <h2>Bloquear Pessoas</h2>
+            <input type="text" id="blockNameInput" class="option-btn" placeholder="Nome da pessoa a bloquear">
+            <button id="addBlockButton" class="btn btn-red">Bloquear</button>
+            <h3 id="blocked-list-title" style="display: none; margin-top: 10px;">Pessoas Bloqueadas:</h3>
+            <ul id="blocked-users-list"></ul>
+            <button id="backFromBlockButton" class="btn btn-primary">Voltar</button>
+        </div>
 
         <div id="declineOptions" style="display: none;">
-            <div id="optionChato" class="option-btn">1. muito chato</div>
-            <div id="optionNaoSei" class="option-btn">2. nao sei o que e</div>
-            <button id="supportButton" class="glowing-btn-green">falar com o support</button>
+            <div id="optionChato" class="option-btn">1 Muito chato</div>
+            <div id="optionNaoSei" class="option-btn">2 Não sei o que e</div>
+            <button id="supportButton" class="btn-green">falar com o suporte</button>
+            <button id="backFromDeclineButton" class="btn btn-primary" style="margin-top: 10px;">Voltar</button>
+        </div>
+
+        <div id="visitors-list-container" style="display: none;">
+            <h2>Visitantes</h2>
+            <ul id="visitors-list"></ul>
+            <button id="backFromVisitorsButton" class="btn btn-primary">Voltar</button>
         </div>
 
         <div id="loader">
-            <div class="progress-ring-container">
-                <svg class="progress-ring" width="120" height="120">
-                   <circle class="progress-ring__circle-bg" stroke-width="8" fill="transparent" r="52" cx="60" cy="60"/>
-                   <circle class="progress-ring__circle" stroke-width="8" fill="transparent" r="52" cx="60" cy="60"/>
-                </svg>
-                <span id="percentage">0%</span>
-            </div>
+            <div class="spinner"></div>
             <p id="loader-text">Analisando seus dados...</p>
         </div>
 
@@ -492,34 +568,64 @@
         const welcomeMessage = document.getElementById('welcomeMessage');
         const actionButton = document.getElementById('actionButton');
         const partnerButton = document.getElementById('partnerButton');
+        const visitorsButton = document.getElementById('visitorsButton');
         const blockButton = document.getElementById('blockButton');
         const partnerFormContainer = document.getElementById('partner-form-container');
         const partnerNameInput = document.getElementById('partnerNameInput');
         const partnerAgeInput = document.getElementById('partnerAgeInput');
         const partnerConfirmButton = document.getElementById('partnerConfirmButton');
+        const backFromPartnerButton = document.getElementById('backFromPartnerButton');
         const partnerErrorMessage = document.getElementById('partner-error-message');
         const loader = document.getElementById('loader');
-        const percentageText = document.getElementById('percentage');
         const notification = document.getElementById('notification');
         const declineButton = document.getElementById('declineButton');
         const declineOptions = document.getElementById('declineOptions');
         const optionChato = document.getElementById('optionChato');
-        const optionNaoSei = document.getElementById('optionNaoSei'); // Adicionado para consistência, mesmo sem ação específica
         const supportButton = document.getElementById('supportButton');
+        const backFromDeclineButton = document.getElementById('backFromDeclineButton');
         const feedbackMessage = document.getElementById('feedbackMessage');
         const animatedNotification = document.getElementById('animated-notification');
-        const progressCircle = document.querySelector('.progress-ring__circle');
         const loaderText = document.getElementById('loader-text');
+        const blockListContainer = document.getElementById('block-list-container');
+        const blockNameInput = document.getElementById('blockNameInput');
+        const addBlockButton = document.getElementById('addBlockButton');
+        const blockedUsersList = document.getElementById('blocked-users-list');
+        const backFromBlockButton = document.getElementById('backFromBlockButton');
+        const blockedListTitle = document.getElementById('blocked-list-title');
+        const visitorsListContainer = document.getElementById('visitors-list-container');
+        const visitorsList = document.getElementById('visitors-list');
+        const backFromVisitorsButton = document.getElementById('backFromVisitorsButton');
+
+        function getBlockedUsers() {
+            return JSON.parse(localStorage.getItem('blockedUsers') || '[]');
+        }
+
+        function saveBlockedUsers(users) {
+            localStorage.setItem('blockedUsers', JSON.stringify(users));
+        }
+
+        function getVisitedUsers() {
+            return JSON.parse(localStorage.getItem('visitedUsers') || '[]');
+        }
+
+        function saveVisitedUsers(users) {
+            localStorage.setItem('visitedUsers', JSON.stringify(users));
+        }
 
         function resetPage() {
             // Esconde todos os elementos de interação
             loader.style.display = 'none';
             notification.style.display = 'none';
             declineOptions.style.display = 'none';
+            blockListContainer.style.display = 'none';
+            visitorsListContainer.style.display = 'none';
+            visitorsListContainer.classList.remove('fade-in-up');
+            blockListContainer.classList.remove('fade-in-up');
             feedbackMessage.style.display = 'none';
             partnerFormContainer.style.display = 'none';
             // Mostra o conteúdo principal
             mainContent.style.display = 'flex';
+            mainContent.classList.add('fade-in-up');
         }
 
         function showAnimatedNotification(title, message, type = 'success') {
@@ -548,7 +654,15 @@
         function showMainContent(name) {
             nameContainer.style.display = 'none';
             welcomeMessage.textContent = `Olá, ${name}!`;
-            mainContent.style.display = 'flex'; /* Mantém flex para que as propriedades do CSS funcionem */
+            mainContent.style.display = 'flex';
+            mainContent.classList.add('fade-in-up');
+
+            // Mostra o botão de visitantes apenas para o admin
+            if (name.toLowerCase() === 'lucaspedro') {
+                visitorsButton.style.display = 'block';
+            } else {
+                visitorsButton.style.display = 'none';
+            }
         }
 
         // Verifica se o nome já está salvo no carregamento da página
@@ -557,7 +671,7 @@
             if (savedName) {
                 showMainContent(savedName);
             } else {
-                nameContainer.style.display = 'flex';
+                nameContainer.style.display = 'flex'; // Já tem a classe de animação no HTML
             }
         });
 
@@ -565,20 +679,17 @@
             const userName = nameInput.value.trim();
             if (userName) {
                 localStorage.setItem('userName', userName);
+
+                // Adiciona à lista de visitantes se não existir
+                const visited = getVisitedUsers();
+                if (!visited.includes(userName)) {
+                    visited.push(userName);
+                    saveVisitedUsers(visited);
+                }
+
                 showMainContent(userName);
             }
         });
-
-        function resetPage() {
-            // Esconde todos os elementos de interação
-            loader.style.display = 'none';
-            notification.style.display = 'none';
-            declineOptions.style.display = 'none';
-            feedbackMessage.style.display = 'none';
-            partnerFormContainer.style.display = 'none';
-            // Mostra o conteúdo principal
-            mainContent.style.display = 'flex';
-        }
 
         actionButton.addEventListener('click', () => {
             mainContent.style.display = 'none';
@@ -599,26 +710,10 @@
                 setTimeout(() => { loaderText.textContent = loadingMessages[messageIndex]; loaderText.style.opacity = 1; }, 500);
             }, 2500);
 
-            const radius = progressCircle.r.baseVal.value;
-            const circumference = 2 * Math.PI * radius;
-            progressCircle.style.strokeDasharray = `${circumference} ${circumference}`;
-            progressCircle.style.strokeDashoffset = circumference;
-
-            let percentage = 0;
-            const interval = setInterval(() => {
-                percentage++;
-                percentageText.textContent = percentage + '%';
-                const offset = circumference - (percentage / 100) * circumference;
-                progressCircle.style.strokeDashoffset = offset;
-                if (percentage >= 100) {
-                    clearInterval(interval);
-                    clearInterval(messageInterval);
-                }
-            }, 100); // 100ms * 100 = 10000ms = 10 segundos
-
             setTimeout(() => {
                 loader.style.display = 'none';
                 clearInterval(messageInterval); // Garante que o intervalo de mensagens pare
+
                 showAnimatedNotification('Sucesso!', 'Você já está participando!');
                 setTimeout(() => {
                     resetPage();
@@ -628,12 +723,16 @@
 
         declineButton.addEventListener('click', () => {
             mainContent.style.display = 'none';
+            mainContent.classList.remove('fade-in-up');
             declineOptions.style.display = 'flex';
+            declineOptions.classList.add('fade-in-up');
         });
 
         partnerButton.addEventListener('click', () => {
             mainContent.style.display = 'none';
+            mainContent.classList.remove('fade-in-up');
             partnerFormContainer.style.display = 'flex';
+            partnerFormContainer.classList.add('fade-in-up');
         });
 
         partnerConfirmButton.addEventListener('click', () => {
@@ -646,6 +745,7 @@
                 partnerErrorMessage.style.display = 'block';
             } else if (name && age) {
                 partnerFormContainer.style.display = 'none';
+                partnerFormContainer.classList.remove('fade-in-up');
                 showAnimatedNotification('Concluído!', 'Parceiro adicionado com sucesso!');
                 setTimeout(() => {
                     resetPage();
@@ -653,8 +753,16 @@
             }
         });
 
+        backFromPartnerButton.addEventListener('click', () => {
+            partnerFormContainer.style.display = 'none';
+            partnerFormContainer.classList.remove('fade-in-up');
+            mainContent.style.display = 'flex';
+            mainContent.classList.add('fade-in-up');
+        });
+
         optionChato.addEventListener('click', () => {
             declineOptions.style.display = 'none';
+            declineOptions.classList.remove('fade-in-up');
             showAnimatedNotification('Obrigado!', 'Seu feedback foi enviado.');
             setTimeout(() => {
                 resetPage();
@@ -663,6 +771,7 @@
 
         optionNaoSei.addEventListener('click', () => {
             declineOptions.style.display = 'none';
+            declineOptions.classList.remove('fade-in-up');
             showAnimatedNotification('Aviso', 'Por favor, contrate um Support.', 'warning');
             setTimeout(() => {
                 resetPage();
@@ -671,19 +780,102 @@
 
         supportButton.addEventListener('click', () => {
             declineOptions.style.display = 'none';
+            declineOptions.classList.remove('fade-in-up');
             showAnimatedNotification('Aviso', 'O support só ta disponível as 20h', 'warning');
             setTimeout(() => {
                 resetPage();
             }, 3000);
         });
 
-        blockButton.addEventListener('click', () => {
-            mainContent.style.display = 'none';
-            showAnimatedNotification('Aviso', 'Função de bloqueio indisponível no momento.', 'warning');
+        backFromDeclineButton.addEventListener('click', () => {
+            declineOptions.style.display = 'none';
+            declineOptions.classList.remove('fade-in-up');
+            showAnimatedNotification('Aviso', 'O support só ta disponível as 20h', 'warning');
             setTimeout(() => {
                 resetPage();
             }, 3000);
         });
+
+        function renderBlockedUsers() {
+            const blockedUsers = getBlockedUsers();
+            blockedUsersList.innerHTML = '';
+            if (blockedUsers.length > 0) {
+                blockedListTitle.style.display = 'block';
+                blockedUsers.forEach((user, index) => {
+                    const li = document.createElement('li');
+                    li.textContent = user;
+                    const unblockBtn = document.createElement('button');
+                    unblockBtn.textContent = 'Desbloquear';
+                    unblockBtn.className = 'unblock-btn';
+                    unblockBtn.onclick = () => {
+                        blockedUsers.splice(index, 1);
+                        saveBlockedUsers(blockedUsers);
+                        renderBlockedUsers();
+                        showAnimatedNotification('Sucesso!', `'${user}' foi desbloqueado.`);
+                    };
+                    li.appendChild(unblockBtn);
+                    blockedUsersList.appendChild(li);
+                });
+            } else {
+                blockedListTitle.style.display = 'none';
+            }
+        }
+
+        blockButton.addEventListener('click', () => {
+            mainContent.style.display = 'none';
+            mainContent.classList.remove('fade-in-up');
+            blockListContainer.style.display = 'flex';
+            blockListContainer.classList.add('fade-in-up');
+            renderBlockedUsers();
+        });
+
+        addBlockButton.addEventListener('click', () => {
+            const nameToBlock = blockNameInput.value.trim();
+            if (nameToBlock) {
+                const blockedUsers = getBlockedUsers();
+                blockedUsers.push(nameToBlock);
+                saveBlockedUsers(blockedUsers);
+                renderBlockedUsers();
+                blockNameInput.value = '';
+                showAnimatedNotification('Bloqueado!', `'${nameToBlock}' foi adicionado à lista de bloqueio.`);
+            }
+        });
+
+        backFromBlockButton.addEventListener('click', () => {
+            resetPage();
+        });
+
+        function renderVisitedUsers() {
+            const visitedUsers = getVisitedUsers();
+            visitorsList.innerHTML = '';
+            if (visitedUsers.length > 0) {
+                visitedUsers.forEach(user => {
+                    const li = document.createElement('li');
+                    li.textContent = user;
+                    visitorsList.appendChild(li);
+                });
+            } else {
+                const li = document.createElement('li');
+                li.textContent = "Nenhum visitante ainda.";
+                visitorsList.appendChild(li);
+            }
+        }
+
+        visitorsButton.addEventListener('click', () => {
+            mainContent.style.display = 'none';
+            mainContent.classList.remove('fade-in-up');
+            visitorsListContainer.style.display = 'flex';
+            visitorsListContainer.classList.add('fade-in-up');
+            renderVisitedUsers();
+        });
+
+        backFromVisitorsButton.addEventListener('click', () => {
+            resetPage();
+        });
+    </script>
+
+</body>
+</html> 
     </script>
 
 </body>
