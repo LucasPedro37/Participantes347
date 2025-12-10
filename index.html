@@ -59,6 +59,22 @@
             flex-grow: 1;
         }
 
+        #user-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 10px;
+        }
+
+        .profile-pic {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid var(--primary-color);
+            object-fit: cover;
+            cursor: pointer;
+        }
+
         #name-container {
             display: flex;
             flex-direction: column;
@@ -139,6 +155,13 @@
         }
         .btn-red:hover {
             box-shadow: 0 0 15px var(--danger-color), 0 0 30px var(--danger-color);
+        }
+
+        .btn-info {
+            background: var(--secondary-color);
+        }
+        .btn-info:hover {
+            box-shadow: 0 0 15px var(--secondary-color), 0 0 30px var(--secondary-color);
         }
 
         .btn-warning {
@@ -229,6 +252,17 @@
             text-align: center;
             font-family: 'Poppins', sans-serif;
         }
+
+        #support-message-container textarea {
+            width: 320px;
+            height: 120px;
+            resize: vertical;
+            font-family: 'Poppins', sans-serif;
+            padding: 15px;
+            font-size: 16px;
+            box-sizing: border-box; /* Garante que o padding não aumente a largura */
+        }
+
 
         .option-btn:hover {
             background-color: #444;
@@ -525,21 +559,27 @@
         </div>
 
         <div id="main-content">
-            <h2 id="welcomeMessage"></h2>
+            <div id="user-header">
+                <img src="https://i.imgur.com/V4RclNb.png" id="profile-pic" class="profile-pic" alt="Foto de Perfil">
+                <h2 id="welcomeMessage"></h2>
+            </div>
             <div class="button-group">
                 <button id="actionButton" class="btn btn-primary">Participar</button>
                 <button id="partnerButton" class="btn btn-orange">Escolher um Parceiro</button>
+                <button id="showPartnerButton" class="btn btn-info">Qual Parceiro eu escolhi?</button>
                 <button id="declineButton" class="btn btn-purple">Não quero participar</button>
                 <button id="blockButton" class="btn btn-red">Bloquear Pessoas</button>
                 <button id="maintenanceButton" class="btn btn-warning" style="display: none;">Manutenção</button>
             </div>
+            <input type="file" id="profilePicInput" accept="image/*" style="display: none;">
         </div>
 
         <div id="partner-form-container">
             <h2>Dados do Parceiro</h2>
+            <p style="color: var(--warning-color); font-size: 14px; margin-bottom: 10px; text-align: center;">É obrigatoriamente você colocar o Instagram</p>
             <input type="text" id="partnerNameInput" class="option-btn" placeholder="Nome do parceiro">
-            <input type="number" id="partnerAgeInput" class="option-btn" placeholder="Idade do parceiro" min="1">
-            <div id="partner-error-message">A idade não pode ser 30 anos ou mais.</div>
+            <input type="number" id="partnerAgeInput" class="option-btn" placeholder="Idade do parceiro" min="1" inputmode="numeric">
+            <input type="text" id="partnerInstagramInput" class="option-btn" placeholder="Instagram do parceiro (sem @)">
             <div class="button-group-horizontal">
                 <button id="partnerConfirmButton" class="btn-green">Concluir</button>
                 <button id="backFromPartnerButton" class="btn btn-primary">Voltar</button>
@@ -556,10 +596,22 @@
         </div>
 
         <div id="declineOptions" style="display: none;">
-            <div id="optionChato" class="option-btn">1 Muito chato</div>
-            <div id="optionNaoSei" class="option-btn">2 Não sei o que e</div>
-            <button id="supportButton" class="btn-green">falar com o suporte</button>
-            <button id="backFromDeclineButton" class="btn btn-primary" style="margin-top: 10px;">Voltar</button>
+            <h2 style="margin-bottom: 10px;">Mandar mensagem para o suporte</h2>
+            <div id="optionBugs" class="option-btn">1. Bugs</div>
+            <div id="optionError" class="option-btn">2. Muito erro</div>
+            <div id="optionFeatures" class="option-btn">3. Precisa de mais funções</div>
+            <div id="optionOthers" class="option-btn">4. Outros</div>
+            <div id="optionWrite" class="option-btn">5. Escrever para o suporte</div>
+            <button id="backFromDeclineButton" class="btn btn-primary" style="margin-top: 15px;">Voltar</button>
+        </div>
+
+        <div id="support-message-container" style="display: none; flex-direction: column; align-items: center; gap: 15px; background-color: rgba(30, 30, 47, 0.7); padding: 20px; border-radius: 15px; backdrop-filter: blur(5px);">
+            <h2 style="margin-bottom: 5px;">Escreva sua mensagem</h2>
+            <textarea id="supportMessageText" class="option-btn" placeholder="Sua mensagem aqui..." rows="5"></textarea>
+            <div class="button-group-horizontal">
+                <button id="sendSupportMessageButton" class="btn-green">Enviar</button>
+                <button id="backFromSupportMessageButton" class="btn btn-primary">Voltar</button>
+            </div>
         </div>
 
         <div id="loader">
@@ -589,8 +641,36 @@
         </div>
     </div>
 
+    <!-- Diálogo de Confirmação -->
+    <div id="confirmation-dialog" class="notification-overlay">
+        <div class="notification-box">
+            <h3 id="confirmation-title" style="color: var(--warning-color);">Confirmar Ação</h3>
+            <p id="confirmation-message">Tem certeza?</p>
+            <div class="button-group-horizontal" style="margin-top: 20px; gap: 20px;">
+                <button id="confirm-yes-button" class="btn btn-red">Sim</button>
+                <button id="confirm-no-button" class="btn btn-primary">Não</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Diálogo de Informação do Parceiro -->
+    <div id="partner-info-dialog" class="notification-overlay">
+        <div class="notification-box">
+            <h3 id="partner-info-title" style="color: var(--warning-color);">Seu Parceiro Escolhido</h3>
+            <div id="partner-info-details" style="margin-bottom: 20px;">
+                <!-- Os detalhes do parceiro serão inseridos aqui pelo JavaScript -->
+            </div>
+            <button id="partner-info-back-button" class="btn btn-primary">Voltar</button>
+        </div>
+    </div>
+
+
     <footer>
-        Criado por @lucaspedro!
+        <p>Criado por @lucaspedro!</p>
+        <p style="margin-top: 8px; font-size: 11px; color: var(--text-color);">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-shield-lock-fill" viewBox="0 0 16 16" style="vertical-align: -2px; margin-right: 4px;"><path fill-rule="evenodd" d="M8 0c-.69 0-1.843.265-2.928.56-1.11.3-2.229.655-2.887.87a1.54 1.54 0 0 0-1.044 1.262c-.596 4.477.787 7.795 2.465 9.99a11.777 11.777 0 0 0 2.517 2.453c.386.273.744.482 1.048.625.28.132.581.19.829.19s.548-.058.829-.19c.304-.143.662-.352 1.048-.625a11.775 11.775 0 0 0 2.517-2.453c1.678-2.195 3.061-5.513 2.465-9.99a1.541 1.541 0 0 0-1.044-1.263 62.468 62.468 0 0 0-2.887-.87C9.843.265 8.69 0 8 0zm0 5a1.5 1.5 0 0 1 .5 2.915l.385 1.99a.5.5 0 0 1-.491.595h-.788a.5.5 0 0 1-.49-.595l.384-1.99A1.5 1.5 0 0 1 8 5z"/></svg>
+            Sua conta é protegida. Nem mesmo o administrador pode acessar seus dados pessoais.
+        </p>
     </footer>
 
     <script>
@@ -601,20 +681,24 @@
         const welcomeMessage = document.getElementById('welcomeMessage');
         const actionButton = document.getElementById('actionButton');
         const partnerButton = document.getElementById('partnerButton');
+        const showPartnerButton = document.getElementById('showPartnerButton'); 
         const maintenanceButton = document.getElementById('maintenanceButton');
         const blockButton = document.getElementById('blockButton');
         const partnerFormContainer = document.getElementById('partner-form-container');
         const partnerNameInput = document.getElementById('partnerNameInput');
         const partnerAgeInput = document.getElementById('partnerAgeInput');
+        const partnerInstagramInput = document.getElementById('partnerInstagramInput');
         const partnerConfirmButton = document.getElementById('partnerConfirmButton');
         const backFromPartnerButton = document.getElementById('backFromPartnerButton');
-        const partnerErrorMessage = document.getElementById('partner-error-message');
         const loader = document.getElementById('loader');
         const notification = document.getElementById('notification');
         const declineButton = document.getElementById('declineButton');
         const declineOptions = document.getElementById('declineOptions');
-        const optionChato = document.getElementById('optionChato');
-        const supportButton = document.getElementById('supportButton');
+        const optionBugs = document.getElementById('optionBugs');
+        const optionError = document.getElementById('optionError');
+        const optionFeatures = document.getElementById('optionFeatures');
+        const optionOthers = document.getElementById('optionOthers');
+        const optionWrite = document.getElementById('optionWrite');
         const backFromDeclineButton = document.getElementById('backFromDeclineButton');
         const feedbackMessage = document.getElementById('feedbackMessage');
         const animatedNotification = document.getElementById('animated-notification');
@@ -626,14 +710,19 @@
         const backFromBlockButton = document.getElementById('backFromBlockButton');
         const blockedListTitle = document.getElementById('blocked-list-title');
         const maintenanceContainer = document.getElementById('maintenance-container');
-
-        function getBlockedUsers() {
-            return JSON.parse(localStorage.getItem('blockedUsers') || '[]');
-        }
-
-        function saveBlockedUsers(users) {
-            localStorage.setItem('blockedUsers', JSON.stringify(users));
-        }
+        const confirmationDialog = document.getElementById('confirmation-dialog');
+        const confirmationMessage = document.getElementById('confirmation-message');
+        const confirmYesButton = document.getElementById('confirm-yes-button');
+        const confirmNoButton = document.getElementById('confirm-no-button');
+        const partnerInfoDialog = document.getElementById('partner-info-dialog');
+        const partnerInfoDetails = document.getElementById('partner-info-details');
+        const partnerInfoBackButton = document.getElementById('partner-info-back-button');
+        const profilePic = document.getElementById('profile-pic');
+        const profilePicInput = document.getElementById('profilePicInput');
+        const supportMessageContainer = document.getElementById('support-message-container');
+        const supportMessageText = document.getElementById('supportMessageText');
+        const sendSupportMessageButton = document.getElementById('sendSupportMessageButton');
+        const backFromSupportMessageButton = document.getElementById('backFromSupportMessageButton');
 
         function resetPage() {
             // Esconde todos os elementos de interação
@@ -644,6 +733,7 @@
             blockListContainer.classList.remove('fade-in-up');
             feedbackMessage.style.display = 'none';
             partnerFormContainer.style.display = 'none';
+            supportMessageContainer.style.display = 'none';
             // Mostra o conteúdo principal
             mainContent.style.display = 'flex';
             mainContent.classList.add('fade-in-up');
@@ -652,7 +742,7 @@
         function showAnimatedNotification(title, message, type = 'success') {
             const notificationBox = animatedNotification.querySelector('.notification-box');
             document.getElementById('notification-title').textContent = title;
-            document.getElementById('notification-message').textContent = message;
+            document.getElementById('notification-message').innerHTML = message;
 
             const checkmark = animatedNotification.querySelector('.checkmark');
             const exclamationMark = animatedNotification.querySelector('.exclamation-mark');
@@ -701,6 +791,14 @@
             }
         }
 
+        // Carrega a foto de perfil do localStorage
+        function loadProfilePicture() {
+            const savedPic = localStorage.getItem('profilePicture');
+            if (savedPic) {
+                profilePic.src = savedPic;
+            }
+        }
+
         // Verifica se o nome já está salvo no carregamento da página
         window.addEventListener('load', () => {
             const savedName = localStorage.getItem('userName');
@@ -719,6 +817,7 @@
             }
             // Se não estiver em manutenção ou se for admin, continua normal
             if (savedName) {
+                loadProfilePicture();
                 showMainContent(savedName);
             } else {
                 nameContainer.style.display = 'flex';
@@ -731,6 +830,26 @@
                 localStorage.setItem('userName', userName);
                 // Recarrega a página para aplicar a lógica de manutenção corretamente
                 window.location.reload();
+            }
+        });
+
+        // Evento para abrir o seletor de arquivos ao clicar na foto
+        profilePic.addEventListener('click', () => {
+            profilePicInput.click();
+        });
+
+        // Evento para quando um arquivo for selecionado
+        profilePicInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const imageDataUrl = e.target.result;
+                    profilePic.src = imageDataUrl;
+                    localStorage.setItem('profilePicture', imageDataUrl);
+                    showAnimatedNotification('Sucesso!', 'Sua foto de perfil foi atualizada.', 'success');
+                };
+                reader.readAsDataURL(file);
             }
         });
 
@@ -781,24 +900,75 @@
             declineOptions.classList.add('fade-in-up');
         });
 
-        partnerButton.addEventListener('click', () => {
+        function showPartnerForm() {
             mainContent.style.display = 'none';
             mainContent.classList.remove('fade-in-up');
             partnerFormContainer.style.display = 'flex';
             partnerFormContainer.classList.add('fade-in-up');
+        }
+
+        partnerButton.addEventListener('click', () => {
+            if (localStorage.getItem('hasAddedPartner') === 'true') {
+                document.getElementById('confirmation-title').textContent = 'Trocar de Parceiro?';
+                confirmationMessage.textContent = 'Você já tem um parceiro. Deseja trocá-lo por um novo?';
+                confirmationDialog.classList.add('show');
+
+                confirmYesButton.onclick = () => {
+                    confirmationDialog.classList.remove('show');
+                    showPartnerForm();
+                };
+                confirmNoButton.onclick = () => confirmationDialog.classList.remove('show');
+            } else {
+                showPartnerForm();
+            }
+        });
+
+        showPartnerButton.addEventListener('click', () => {
+            const partnerDataString = localStorage.getItem('partnerData');
+            if (partnerDataString) {
+                const partnerData = JSON.parse(partnerDataString);
+                const message = `
+                    <p style="text-align: left; line-height: 1.6;">
+                        <strong>Nome:</strong> ${partnerData.name}<br>
+                        <strong>Idade:</strong> ${partnerData.age}<br>
+                        <strong>Instagram:</strong> @${partnerData.instagram}
+                    </p>`;
+                partnerInfoDetails.innerHTML = message;
+                partnerInfoDialog.classList.add('show');
+            } else {
+                showAnimatedNotification('Aviso!', 'Você ainda não escolheu um parceiro.', 'info');
+            }
+        });
+
+        partnerInfoBackButton.addEventListener('click', () => {
+            partnerInfoDialog.classList.remove('show');
         });
 
         partnerConfirmButton.addEventListener('click', () => {
             const age = parseInt(partnerAgeInput.value, 10);
             const name = partnerNameInput.value.trim();
+            const instagram = partnerInstagramInput.value.trim();
 
-            partnerErrorMessage.style.display = 'none'; // Esconde a mensagem de erro
+            if (!name || !age || !instagram) {
+                showAnimatedNotification('Atenção!', 'Por favor, preencha todos os campos.', 'info');
+                return;
+            }
 
             if (age >= 30) {
-                partnerErrorMessage.style.display = 'block';
-            } else if (name && age) {
+                showAnimatedNotification('Erro!', 'A idade não pode ser 30 anos ou mais.', 'warning');
+            } else {
+                const partnerData = {
+                    name: name,
+                    age: age,
+                    instagram: instagram
+                };
+                localStorage.setItem('partnerData', JSON.stringify(partnerData));
+                localStorage.setItem('hasAddedPartner', 'true'); // Mantendo para compatibilidade
                 partnerFormContainer.style.display = 'none';
                 partnerFormContainer.classList.remove('fade-in-up');
+                partnerNameInput.value = '';
+                partnerAgeInput.value = '';
+                partnerInstagramInput.value = '';
                 showAnimatedNotification('Concluído!', 'Parceiro adicionado com sucesso!');
                 setTimeout(() => {
                     resetPage();
@@ -813,90 +983,121 @@
             mainContent.classList.add('fade-in-up');
         });
 
-        optionChato.addEventListener('click', () => {
+        function handleSupportOptionClick() {
             declineOptions.style.display = 'none';
             declineOptions.classList.remove('fade-in-up');
             showAnimatedNotification('Obrigado!', 'Seu feedback foi enviado.');
             setTimeout(() => {
                 resetPage();
-            }, 3000); // Volta ao início após 3 segundos
-        });
+            }, 3000);
+        }
 
-        optionNaoSei.addEventListener('click', () => {
+        optionBugs.addEventListener('click', handleSupportOptionClick);
+        optionError.addEventListener('click', handleSupportOptionClick);
+        optionFeatures.addEventListener('click', handleSupportOptionClick);
+        optionOthers.addEventListener('click', handleSupportOptionClick);
+
+        optionWrite.addEventListener('click', () => {
             declineOptions.style.display = 'none';
             declineOptions.classList.remove('fade-in-up');
-            showAnimatedNotification('Aviso', 'Por favor, contrate um Support.', 'warning');
-            setTimeout(() => {
-                resetPage();
-            }, 3000);
+            supportMessageContainer.style.display = 'flex';
+            supportMessageContainer.classList.add('fade-in-up');
         });
 
-        supportButton.addEventListener('click', () => {
-            declineOptions.style.display = 'none';
-            declineOptions.classList.remove('fade-in-up');
-            showAnimatedNotification('Aviso', 'O support só ta disponível as 20h', 'warning');
-            setTimeout(() => {
-                resetPage();
-            }, 3000);
+        sendSupportMessageButton.addEventListener('click', () => {
+            const message = supportMessageText.value.trim();
+            if (message) {
+                // Lógica para enviar a mensagem (aqui apenas simulamos)
+                console.log('Mensagem de suporte enviada:', message);
+                supportMessageText.value = ''; // Limpa o campo
+                supportMessageContainer.style.display = 'none';
+                showAnimatedNotification('Obrigado!', 'Sua mensagem foi enviada com sucesso.');
+                setTimeout(resetPage, 3000);
+            } else {
+                showAnimatedNotification('Atenção!', 'Por favor, escreva uma mensagem antes de enviar.', 'info');
+            }
         });
+
+        backFromSupportMessageButton.addEventListener('click', () => {
+            supportMessageContainer.style.display = 'none';
+            declineOptions.style.display = 'flex'; // Volta para as opções de suporte
+        });
+
 
         backFromDeclineButton.addEventListener('click', () => {
             declineOptions.style.display = 'none';
             declineOptions.classList.remove('fade-in-up');
-            showAnimatedNotification('Aviso', 'O support só ta disponível as 20h', 'warning');
-            setTimeout(() => {
-                resetPage();
-            }, 3000);
-        });
-
-        function renderBlockedUsers() {
-            const blockedUsers = getBlockedUsers();
-            blockedUsersList.innerHTML = '';
-            if (blockedUsers.length > 0) {
-                blockedListTitle.style.display = 'block';
-                blockedUsers.forEach((user, index) => {
-                    const li = document.createElement('li');
-                    li.textContent = user;
-                    const unblockBtn = document.createElement('button');
-                    unblockBtn.textContent = 'Desbloquear';
-                    unblockBtn.className = 'unblock-btn';
-                    unblockBtn.onclick = () => {
-                        blockedUsers.splice(index, 1);
-                        saveBlockedUsers(blockedUsers);
-                        renderBlockedUsers();
-                        showAnimatedNotification('Sucesso!', `'${user}' foi desbloqueado.`);
-                    };
-                    li.appendChild(unblockBtn);
-                    blockedUsersList.appendChild(li);
-                });
-            } else {
-                blockedListTitle.style.display = 'none';
-            }
-        }
-
-        blockButton.addEventListener('click', () => {
-            mainContent.style.display = 'none';
-            mainContent.classList.remove('fade-in-up');
-            blockListContainer.style.display = 'flex';
-            blockListContainer.classList.add('fade-in-up');
-            renderBlockedUsers();
-        });
-
-        addBlockButton.addEventListener('click', () => {
-            const nameToBlock = blockNameInput.value.trim();
-            if (nameToBlock) {
-                const blockedUsers = getBlockedUsers();
-                blockedUsers.push(nameToBlock);
-                saveBlockedUsers(blockedUsers);
-                renderBlockedUsers();
-                blockNameInput.value = '';
-                showAnimatedNotification('Bloqueado!', `'${nameToBlock}' foi adicionado à lista de bloqueio.`);
-            }
-        });
-
-        backFromBlockButton.addEventListener('click', () => {
             resetPage();
         });
+
+        /* async function renderBlockedUsers() {
+            try {
+                const response = await fetch('http://localhost:3000/api/blocked-users');
+                const blockedUsers = await response.json();
+
+                blockedUsersList.innerHTML = '';
+                if (blockedUsers.length > 0) {
+                    blockedListTitle.style.display = 'block';
+                    blockedUsers.forEach(user => {
+                        const li = document.createElement('li');
+                        li.textContent = user;
+                        const unblockBtn = document.createElement('button');
+                        unblockBtn.textContent = 'Desbloquear';
+                        unblockBtn.className = 'unblock-btn';
+                        unblockBtn.onclick = async () => {
+                            await fetch(`http://localhost:3000/api/blocked-users/${encodeURIComponent(user)}`, { method: 'DELETE' });
+                            renderBlockedUsers(); // Recarrega a lista do servidor
+                            showAnimatedNotification('Sucesso!', `'${user}' foi desbloqueado.`);
+                        };
+                        li.appendChild(unblockBtn);
+                        blockedUsersList.appendChild(li);
+                    });
+                } else {
+                    blockedListTitle.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Erro ao buscar usuários bloqueados:', error);
+                showAnimatedNotification('Erro de Rede', 'Não foi possível conectar ao servidor.', 'warning');
+            }
+        } */
+        
+        blockButton.addEventListener('click', () => {
+            showAnimatedNotification('Em Manutenção', 'Esta função está temporariamente indisponível.', 'warning');
+        });
+
+        /* addBlockButton.addEventListener('click', async () => {
+             const nameToBlock = blockNameInput.value.trim();
+            if (!nameToBlock) {
+                showAnimatedNotification('Atenção!', 'Por favor, digite um nome para bloquear.', 'info');
+                return;
+            }
+
+            confirmationMessage.textContent = `Tem certeza que você deseja bloquear "${nameToBlock}"?`;
+            confirmationDialog.classList.add('show');
+
+            confirmYesButton.onclick = async () => {
+                try {
+                    await fetch('http://localhost:3000/api/blocked-users', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ name: nameToBlock })
+                    });
+                    renderBlockedUsers(); // Atualiza a lista a partir do servidor
+                    blockNameInput.value = '';
+                    confirmationDialog.classList.remove('show');
+                    showAnimatedNotification('Bloqueado!', `'${nameToBlock}' foi adicionado à lista de bloqueio.`);
+                } catch (error) {
+                    console.error('Erro ao bloquear usuário:', error);
+                    showAnimatedNotification('Erro de Rede', 'Não foi possível conectar ao servidor.', 'warning');
+                }
+            };
+
+            confirmNoButton.onclick = () => confirmationDialog.classList.remove('show');
+        }); */
+
+        /* backFromBlockButton.addEventListener('click', () => {
+            resetPage();
+        }); */
 
         maintenanceButton.addEventListener('click', () => {
             const maintenanceMode = localStorage.getItem('maintenanceMode');
@@ -914,8 +1115,8 @@
     </script>
 
 </body>
-</html> 
+</html>
     </script>
 
 </body>
-</html>
+</html> 
