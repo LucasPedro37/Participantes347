@@ -589,6 +589,8 @@
         <div id="block-list-container">
             <h2>Bloquear Pessoas</h2>
             <input type="text" id="blockNameInput" class="option-btn" placeholder="Nome da pessoa a bloquear">
+            <input type="number" id="blockAgeInput" class="option-btn" placeholder="Idade da pessoa a bloquear" min="1" inputmode="numeric">
+            <input type="text" id="blockInstagramInput" class="option-btn" placeholder="Instagram da pessoa a bloquear (sem @)">
             <button id="addBlockButton" class="btn btn-red">Bloquear</button>
             <h3 id="blocked-list-title" style="display: none; margin-top: 10px;">Pessoas Bloqueadas:</h3>
             <ul id="blocked-users-list"></ul>
@@ -704,6 +706,8 @@
         const animatedNotification = document.getElementById('animated-notification');
         const loaderText = document.getElementById('loader-text');
         const blockListContainer = document.getElementById('block-list-container');
+        const blockAgeInput = document.getElementById('blockAgeInput');
+        const blockInstagramInput = document.getElementById('blockInstagramInput');
         const blockNameInput = document.getElementById('blockNameInput');
         const addBlockButton = document.getElementById('addBlockButton');
         const blockedUsersList = document.getElementById('blocked-users-list');
@@ -954,6 +958,16 @@
                 return;
             }
 
+            // --- NEW BLOCKING CHECK ---
+            const blockedUsers = getBlockedUsers();
+            // Check if the potential partner's name is in the blocked list (case-insensitive)
+            const isPartnerBlocked = blockedUsers.some(blockedUser => blockedUser.name.toLowerCase() === name.toLowerCase());
+
+            if (isPartnerBlocked) {
+                showAnimatedNotification('Atenção!', `'${name}' está na sua lista de bloqueio. Você não pode escolher esta pessoa como parceiro.`, 'warning');
+                return; // Prevent adding partner if blocked
+            }
+            // --- END NEW BLOCKING CHECK ---
             if (age >= 30) {
                 showAnimatedNotification('Erro!', 'A idade não pode ser 30 anos ou mais.', 'warning');
             } else {
@@ -1030,74 +1044,105 @@
             resetPage();
         });
 
-        /* async function renderBlockedUsers() {
-            try {
-                const response = await fetch('http://localhost:3000/api/blocked-users');
-                const blockedUsers = await response.json();
+        // Helper function to get blocked users from localStorage
+        function getBlockedUsers() {
+            const blockedUsersString = localStorage.getItem('blockedUsers');
+            return blockedUsersString ? JSON.parse(blockedUsersString) : [];
+        }
 
-                blockedUsersList.innerHTML = '';
-                if (blockedUsers.length > 0) {
-                    blockedListTitle.style.display = 'block';
-                    blockedUsers.forEach(user => {
-                        const li = document.createElement('li');
-                        li.textContent = user;
-                        const unblockBtn = document.createElement('button');
-                        unblockBtn.textContent = 'Desbloquear';
-                        unblockBtn.className = 'unblock-btn';
-                        unblockBtn.onclick = async () => {
-                            await fetch(`http://localhost:3000/api/blocked-users/${encodeURIComponent(user)}`, { method: 'DELETE' });
-                            renderBlockedUsers(); // Recarrega a lista do servidor
-                            showAnimatedNotification('Sucesso!', `'${user}' foi desbloqueado.`);
-                        };
-                        li.appendChild(unblockBtn);
-                        blockedUsersList.appendChild(li);
+        // Helper function to save blocked users to localStorage
+        function saveBlockedUsers(users) {
+            localStorage.setItem('blockedUsers', JSON.stringify(users));
+        }
+
+        function renderBlockedUsers() {
+            const blockedUsers = getBlockedUsers();
+            blockedUsersList.innerHTML = '';
+            if (blockedUsers.length > 0) {
+                blockedListTitle.style.display = 'block';
+                blockedUsers.forEach(user => {
+                    const li = document.createElement('li'); // Cria o item da lista
+                    const span = document.createElement('span'); // Cria o texto
+                    span.textContent = `${user.name} (Idade: ${user.age}, IG: @${user.instagram})`;
+
+                    const unblockBtn = document.createElement('button'); // Cria o botão
+                    unblockBtn.textContent = 'Desbloquear';
+                    unblockBtn.className = 'unblock-btn';
+
+                    unblockBtn.addEventListener('click', () => { // Adiciona o evento de clique
+                        const nameToUnblock = user.name;
+                        let currentBlocked = getBlockedUsers();
+                        currentBlocked = currentBlocked.filter(blockedUser => blockedUser.name !== nameToUnblock);
+                        saveBlockedUsers(currentBlocked);
+                        renderBlockedUsers(); // Re-render the list
+                        showAnimatedNotification('Sucesso!', `'${nameToUnblock}' foi desbloqueado.`);
                     });
-                } else {
-                    blockedListTitle.style.display = 'none';
-                }
-            } catch (error) {
-                console.error('Erro ao buscar usuários bloqueados:', error);
-                showAnimatedNotification('Erro de Rede', 'Não foi possível conectar ao servidor.', 'warning');
+
+                    li.appendChild(span);
+                    li.appendChild(unblockBtn); // Adiciona o botão ao item da lista
+                    blockedUsersList.appendChild(li);
+                });
+            } else {
+                blockedListTitle.style.display = 'none';
             }
-        } */
+        }
         
         blockButton.addEventListener('click', () => {
-            showAnimatedNotification('Em Manutenção', 'Esta função está temporariamente indisponível.', 'warning');
+            mainContent.style.display = 'none';
+            mainContent.classList.remove('fade-in-up');
+            blockListContainer.style.display = 'flex';
+            blockListContainer.classList.add('fade-in-up');
+            renderBlockedUsers();
         });
 
-        /* addBlockButton.addEventListener('click', async () => {
-             const nameToBlock = blockNameInput.value.trim();
-            if (!nameToBlock) {
-                showAnimatedNotification('Atenção!', 'Por favor, digite um nome para bloquear.', 'info');
+        addBlockButton.addEventListener('click', () => {
+            const nameToBlock = blockNameInput.value.trim(); // Changed from 'blockNameInput' to 'blockNameInput'
+            const ageToBlock = parseInt(blockAgeInput.value, 10);
+            const instagramToBlock = blockInstagramInput.value.trim();
+
+            if (!nameToBlock || !ageToBlock || !instagramToBlock) {
+                showAnimatedNotification('Atenção!', 'Por favor, preencha todos os campos para bloquear.', 'info');
                 return;
             }
 
-            confirmationMessage.textContent = `Tem certeza que você deseja bloquear "${nameToBlock}"?`;
+            const userName = localStorage.getItem('userName');
+            if (nameToBlock.toLowerCase() === userName.toLowerCase()) {
+                showAnimatedNotification('Atenção!', 'Você não pode bloquear a si mesmo.', 'warning');
+                return;
+            }
+            
+            let blockedUsers = getBlockedUsers();
+            // Check if the person is already blocked by name (case-insensitive)
+            if (blockedUsers.some(user => user.name.toLowerCase() === nameToBlock.toLowerCase())) {
+                showAnimatedNotification('Aviso!', `'${nameToBlock}' já está na lista de bloqueio.`, 'info');
+                return;
+            }
+
+            confirmationMessage.textContent = `Tem certeza que você deseja bloquear "${nameToBlock}" (Idade: ${ageToBlock}, Instagram: @${instagramToBlock})?`;
             confirmationDialog.classList.add('show');
 
-            confirmYesButton.onclick = async () => {
-                try {
-                    await fetch('http://localhost:3000/api/blocked-users', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ name: nameToBlock })
-                    });
-                    renderBlockedUsers(); // Atualiza a lista a partir do servidor
-                    blockNameInput.value = '';
-                    confirmationDialog.classList.remove('show');
-                    showAnimatedNotification('Bloqueado!', `'${nameToBlock}' foi adicionado à lista de bloqueio.`);
-                } catch (error) {
-                    console.error('Erro ao bloquear usuário:', error);
-                    showAnimatedNotification('Erro de Rede', 'Não foi possível conectar ao servidor.', 'warning');
-                }
+            confirmYesButton.onclick = () => {
+                const blockedPerson = {
+                    name: nameToBlock,
+                    age: ageToBlock,
+                    instagram: instagramToBlock
+                };
+                blockedUsers.push(blockedPerson);
+                saveBlockedUsers(blockedUsers);
+                renderBlockedUsers();
+                blockNameInput.value = ''; // Clear input fields
+                blockAgeInput.value = '';
+                blockInstagramInput.value = '';
+                confirmationDialog.classList.remove('show');
+                showAnimatedNotification('Bloqueado!', `'${nameToBlock}' foi adicionado à lista de bloqueio.`);
             };
 
             confirmNoButton.onclick = () => confirmationDialog.classList.remove('show');
-        }); */
+        });
 
-        /* backFromBlockButton.addEventListener('click', () => {
+        backFromBlockButton.addEventListener('click', () => {
             resetPage();
-        }); */
+        });
 
         maintenanceButton.addEventListener('click', () => {
             const maintenanceMode = localStorage.getItem('maintenanceMode');
@@ -1116,7 +1161,3 @@
 
 </body>
 </html>
-    </script>
-
-</body>
-</html> 
