@@ -540,11 +540,43 @@
             }
         }
 
+        /* --- Estilos da Página de Manutenção --- */
+        #maintenance-container {
+            display: none; /* Começa escondido */
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 40px;
+            background-color: var(--light-bg);
+            border-radius: 20px;
+            box-shadow: 0 0 30px rgba(106, 90, 205, 0.5);
+            border: 1px solid var(--primary-color);
+        }
+
+        #maintenance-container h1 {
+            color: var(--warning-color);
+            font-size: 2.2em;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px var(--warning-color);
+        }
+
+        .maintenance-icon {
+            width: 80px;
+            height: 80px;
+            fill: var(--primary-color);
+            margin-bottom: 20px;
+            animation: spin 4s linear infinite; /* Reutiliza a animação de spin, mais lenta */
+        }
+
     </style>
 </head>
 <body>
 
     <div id="maintenance-container" style="display: none;">
+        <svg class="maintenance-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M19.48,12.52a7.49,7.49,0,0,0-1.22-3.26L19.7,7.82,18.28,6.4l-1.44,1.44a7.5,7.5,0,0,0-3.26-1.22V4.5h-2V6.62a7.5,7.5,0,0,0-3.26,1.22L6.88,6.4,5.47,7.82l1.44,1.44a7.49,7.49,0,0,0-1.22,3.26H3.5v2H5.69a7.49,7.49,0,0,0,1.22,3.26L5.47,19.2l1.41,1.41,1.44-1.44a7.5,7.5,0,0,0,3.26,1.22V22.5h2V20.38a7.5,7.5,0,0,0,3.26-1.22l1.44,1.44,1.41-1.41-1.44-1.44a7.49,7.49,0,0,0,1.22-3.26H22.5v-2ZM12,17.5A5.5,5.5,0,1,1,17.5,12,5.5,5.5,0,0,1,12,17.5Z"/>
+            <path d="M12,8.5a3.5,3.5,0,1,0,3.5,3.5A3.5,3.5,0,0,0,12,8.5Z"/>
+        </svg>
         <h1>Site em Manutenção</h1>
         <p>Estamos trabalhando para melhorar sua experiência. Voltamos em breve!</p>
     </div>
@@ -617,7 +649,8 @@
 
         <div id="block-list-container">
             <h2>Bloquear Pessoas</h2>
-            <input type="text" id="blockNameInput" class="option-btn" placeholder="Nome do usuário a banir (opcional)">
+            <!-- O campo de nome para banimento foi removido conforme solicitação anterior. -->
+            <!-- <input type="text" id="blockNameInput" class="option-btn" placeholder="Nome do usuário a banir (opcional)"> -->
             <input type="text" id="blockIdInput" class="option-btn" placeholder="ID do usuário a banir">
             <input type="text" id="blockReasonInput" class="option-btn" placeholder="Motivo do banimento (opcional)">
             <button id="addBlockButton" class="btn btn-red">Bloquear</button>
@@ -760,9 +793,9 @@
         const animatedNotification = document.getElementById('animated-notification');
         const loaderText = document.getElementById('loader-text');
         const maintenanceButton = document.getElementById('maintenanceButton');
-        const blockListContainer = document.getElementById('block-list-container');
+        const blockListContainer = document.getElementById('block-list-container'); // Corrigido o ID
         const blockIdInput = document.getElementById('blockIdInput');
-        const blockNameInput = document.getElementById('blockNameInput'); // NOVO: Input para o nome
+        // const blockNameInput = document.getElementById('blockNameInput'); // Removido, pois o campo de nome não é mais usado para banimento
         const blockReasonInput = document.getElementById('blockReasonInput');
         const addBlockButton = document.getElementById('addBlockButton');
         const blockedUsersList = document.getElementById('blocked-users-list');
@@ -966,73 +999,73 @@
                 window.location.reload();
             }
         });
-        // Verifica se o nome já está salvo no carregamento da página
-        // --- NOVO: Função para registrar o acesso do visitante ---
+
+        // Função para registrar o acesso do visitante
         async function logVisitorAccess(userName, userID) {
-            // IMPORTANTE: Substitua a URL abaixo pela URL do seu webhook.
-            const webhookUrl = 'https://webhook.site/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'; // Exemplo: use um serviço como webhook.site
+            const webhookUrl = 'https://webhook.site/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx';
             if (webhookUrl.includes('xxxxxxxx')) {
                 console.warn("Webhook URL não configurada. O acesso do visitante não será registrado.");
                 return;
             }
-
             try {
                 await fetch(webhookUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        name: userName,
-                        id: userID,
-                        timestamp: new Date().toISOString()
-                    })
+                    body: JSON.stringify({ name: userName, id: userID, timestamp: new Date().toISOString() })
                 });
             } catch (error) { console.error('Erro ao registrar visitante:', error); }
         }
-        window.addEventListener('load', () => {
-            // --- NOVA VERIFICAÇÃO DE BANIMENTO ---
+
+        // Função de inicialização principal para verificar banimento e manutenção
+        function initializePage() {
+            // 1. VERIFICAÇÃO DE BANIMENTO (PRIORIDADE MÁXIMA)
             const currentUserID = localStorage.getItem('userID');
-            const bannedUsers = getBlockedUsers();
-            const isBanned = bannedUsers.some(user => user.id === currentUserID);
-
-            if (isBanned) {
+            if (currentUserID) {
+                const bannedUsers = getBlockedUsers();
                 const banInfo = bannedUsers.find(user => user.id === currentUserID);
-                const bannedUserName = banInfo.name || 'este usuário'; // Pega o nome, ou usa um padrão
-                document.querySelector('.content-wrapper').innerHTML = `
-                    <div style="text-align: center; padding: 20px;">
-                        <h1 style="color: var(--danger-color);">Você foi banido</h1>
-                        <p>${bannedUserName} não pode mais acessar este site porque foi banido.</p>
-                        <p style="font-size: 14px; color: var(--warning-color);">Motivo: ${banInfo.reason || 'Não especificado'}</p>
-                    </div>`;
-                return; // Para a execução do script
-            }
-
-            const savedName = localStorage.getItem('userName');
-            if (savedName) {
-                const isAdmin = savedName.toLowerCase() === 'lucaspedro';
-                const maintenanceMode = localStorage.getItem('maintenanceMode') === 'on';
-
-                if (maintenanceMode && !isAdmin) {
-                    // Se manutenção está ON e não é admin, mostra a tela de manutenção
-                    document.querySelector('.content-wrapper').style.display = 'none';
-                    document.querySelector('.main-title').style.display = 'none';
-                    document.querySelector('footer').style.display = 'none';
-                    maintenanceContainer.style.display = 'flex';
-                    return; // Para a execução
+                if (banInfo) {
+                    const bannedUserName = banInfo.name || 'Este usuário';
+                    document.body.innerHTML = `
+                        <div style="text-align: center; padding: 20px; color: var(--text-color); font-family: 'Poppins', sans-serif;">
+                            <h1 style="color: var(--danger-color);">Você foi banido</h1>
+                            <p>${bannedUserName} não pode mais acessar este site.</p>
+                            <p style="font-size: 14px; color: var(--warning-color);">Motivo: ${banInfo.reason || 'Não especificado'}</p>
+                        </div>`;
+                    return; // Para a execução do script
                 }
             }
-            // Se não estiver em manutenção ou se for admin, continua normal
+
+            // 2. VERIFICAÇÃO DE MODO DE MANUTENÇÃO
+            const maintenanceMode = localStorage.getItem('maintenanceMode') === 'on';
+            const savedName = localStorage.getItem('userName');
+            const isAdmin = savedName && savedName.toLowerCase() === 'lucaspedro';
+
+            if (maintenanceMode && !isAdmin) {
+                // Esconde todo o conteúdo e mostra a tela de manutenção personalizada
+                document.querySelector('.content-wrapper').style.display = 'none';
+                document.querySelector('.main-title').style.display = 'none';
+                document.querySelector('footer').style.display = 'none';
+                maintenanceContainer.style.display = 'flex';
+                maintenanceContainer.classList.add('fade-in-up');
+                return; // Para a execução
+            }
+
+            // 3. LÓGICA DE LOGIN NORMAL
             if (savedName) {
                 loadProfilePicture();
                 const savedID = localStorage.getItem('userID');
-                logVisitorAccess(savedName, savedID); // Registra o acesso
+                logVisitorAccess(savedName, savedID);
                 showMainContent(savedName);
             } else {
-                nameContainer.style.display = 'flex';
+                nameContainer.style.display = 'flex'; // Mostra a tela de login
                 showAnimatedNotification('Atenção!', 'Escolha seu nome apenas 1 vez.', 'info');
                 termsLinkContainer.style.display = 'block'; // Mostra o link dos termos
                 confirmNameButton.disabled = true; // Desabilita o botão de confirmar
             }
-        });
+        }
+
+        // Executa a função de inicialização quando o DOM estiver pronto
+        document.addEventListener('DOMContentLoaded', initializePage);
 
         // Evento para quando um arquivo for selecionado
         profilePicInput.addEventListener('change', (event) => {
@@ -1248,7 +1281,6 @@
             if (blockedUsers.length === 0) {
                 listTitle.textContent = 'Nenhum usuário banido.';
             }
-
             blockedUsers.forEach(user => {
                 const li = document.createElement('li');
                 const span = document.createElement('span');
@@ -1277,13 +1309,13 @@
             mainContent.classList.remove('fade-in-up');
             blockListContainer.style.display = 'flex';
             blockListContainer.classList.add('fade-in-up');
-            renderBlockedUsers();
+            renderBlockedUsers(); // Renderiza a lista de usuários banidos
         }
 
         addBlockButton.addEventListener('click', () => {
             const idToBlock = blockIdInput.value.trim();
-            const nameToBlock = blockNameInput.value.trim(); // NOVO: Pega o nome
             const reason = blockReasonInput.value.trim();
+            const nameToBlock = ''; // O nome não é mais usado para banimento, apenas ID e motivo
 
             if (!idToBlock) {
                 showAnimatedNotification('Atenção!', 'Por favor, insira o ID do usuário para banir.', 'info');
@@ -1303,16 +1335,15 @@
             }
 
             // Atualiza a mensagem de confirmação para incluir o nome
-            confirmationMessage.innerHTML = `Tem certeza que deseja banir o usuário ${nameToBlock ? `"${nameToBlock}"` : ''} com o ID:<br><code>${idToBlock}</code>?`;
+            confirmationMessage.innerHTML = `Tem certeza que deseja banir o usuário com o ID:<br><code>${idToBlock}</code>?`;
             confirmationDialog.classList.add('show');
 
             confirmYesButton.onclick = () => {
-                const blockedPerson = { id: idToBlock, name: nameToBlock, reason: reason }; // Adiciona o nome ao objeto
+                const blockedPerson = { id: idToBlock, name: nameToBlock, reason: reason };
                 blockedUsers.push(blockedPerson);
                 saveBlockedUsers(blockedUsers);
                 renderBlockedUsers();
                 blockIdInput.value = '';
-                blockNameInput.value = ''; // Limpa o novo campo de nome
                 blockReasonInput.value = '';
                 confirmationDialog.classList.remove('show');
                 showAnimatedNotification('Banido!', `O usuário foi adicionado à lista de banimento.`);
