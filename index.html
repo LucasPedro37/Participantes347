@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <style>
         :root {
             --primary-color: #6a5acd; /* Roxo Azulado (SlateBlue) */
@@ -554,22 +555,50 @@
     <div class="content-wrapper">
         <div id="name-container" class="fade-in-up">
             <h2>Bem-vindo(a)! Qual é o seu nome?</h2>
-            <input type="text" id="nameInput" placeholder="Digite seu nome aqui">
-            <button id="confirmNameButton" class="btn btn-primary">Confirmar</button>
+            <div style="display: flex; flex-direction: column; align-items: center; gap: 15px; width: 100%;">
+                <input type="text" id="nameInput" placeholder="Digite seu nome aqui">
+                <button id="confirmNameButton" class="btn btn-primary">Confirmar</button>
+                <p style="margin: 0; font-size: 14px;">ou</p>
+                <!-- Botão de Login com Google -->
+                <div id="g_id_onload"
+                     data-client_id="COLE_SEU_ID_DO_CLIENTE_AQUI.apps.googleusercontent.com"
+                     data-callback="handleCredentialResponse"
+                     data-auto_prompt="false">
+                </div>
+                <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline" data-text="sign_in_with" data-shape="rectangular" data-logo_alignment="left">
+                </div>
+                <!-- Fim do Botão de Login com Google -->
+                <!-- Botão de Login com Facebook -->
+                <button id="facebookLoginButton" class="btn btn-primary" style="background-color: #1877F2; width: 240px; padding: 10px 20px; font-size: 16px; text-transform: none;">
+                    Continuar com o Facebook
+                </button>
+            </div>
         </div>
+
+        <div id="terms-link-container" style="text-align: center; margin-top: 20px; display: none;">
+            <p style="font-size: 14px;">
+                Ao continuar, você concorda com nossos 
+                <a href="#" id="show-terms-link" style="color: var(--secondary-color); text-decoration: none;">Termos de Uso e Regras</a>.
+            </p>
+        </div>
+
 
         <div id="main-content">
             <div id="user-header">
                 <img src="https://i.imgur.com/V4RclNb.png" id="profile-pic" class="profile-pic" alt="Foto de Perfil">
-                <h2 id="welcomeMessage"></h2>
+                <div>
+                    <h2 id="welcomeMessage" style="margin-bottom: 0;"></h2>
+                    <p id="userIdDisplay" style="font-size: 12px; color: var(--text-color); margin-top: 5px;"></p>
+                </div>
             </div>
             <div class="button-group">
                 <button id="actionButton" class="btn btn-primary">Participar</button>
                 <button id="partnerButton" class="btn btn-orange">Escolher um Parceiro</button>
                 <button id="showPartnerButton" class="btn btn-info">Qual Parceiro eu escolhi?</button>
                 <button id="declineButton" class="btn btn-purple">Não quero participar</button>
-                <button id="blockButton" class="btn btn-red">Bloquear Pessoas</button>
                 <button id="maintenanceButton" class="btn btn-warning" style="display: none;">Manutenção</button>
+                <button id="viewVisitorsButton" class="btn btn-info" style="display: none;">Ver Visitantes</button>
+                <button id="logoutButton" class="btn btn-warning">Sair da Conta</button>
             </div>
             <input type="file" id="profilePicInput" accept="image/*" style="display: none;">
         </div>
@@ -588,13 +617,21 @@
 
         <div id="block-list-container">
             <h2>Bloquear Pessoas</h2>
-            <input type="text" id="blockNameInput" class="option-btn" placeholder="Nome da pessoa a bloquear">
-            <input type="number" id="blockAgeInput" class="option-btn" placeholder="Idade da pessoa a bloquear" min="1" inputmode="numeric">
-            <input type="text" id="blockInstagramInput" class="option-btn" placeholder="Instagram da pessoa a bloquear (sem @)">
+            <input type="text" id="blockNameInput" class="option-btn" placeholder="Nome do usuário a banir (opcional)">
+            <input type="text" id="blockIdInput" class="option-btn" placeholder="ID do usuário a banir">
+            <input type="text" id="blockReasonInput" class="option-btn" placeholder="Motivo do banimento (opcional)">
             <button id="addBlockButton" class="btn btn-red">Bloquear</button>
-            <h3 id="blocked-list-title" style="display: none; margin-top: 10px;">Pessoas Bloqueadas:</h3>
             <ul id="blocked-users-list"></ul>
             <button id="backFromBlockButton" class="btn btn-primary">Voltar</button>
+        </div>
+
+        <div id="visitors-container" style="display: none; flex-direction: column; align-items: center; gap: 15px; background-color: rgba(30, 30, 47, 0.7); padding: 20px; border-radius: 15px; backdrop-filter: blur(5px); width: 90%; max-width: 500px;">
+            <h2>Visitantes Recentes</h2>
+            <p style="font-size: 12px; color: var(--text-color); margin: -10px 0 10px 0;">Mostrando os últimos 50 acessos.</p>
+            <ul id="visitors-list" style="list-style: none; padding: 0; width: 100%; max-height: 300px; overflow-y: auto; text-align: left;">
+                <!-- Visitantes serão listados aqui -->
+            </ul>
+            <button id="backFromVisitorsButton" class="btn btn-primary">Voltar</button>
         </div>
 
         <div id="declineOptions" style="display: none;">
@@ -643,6 +680,24 @@
         </div>
     </div>
 
+    <!-- Diálogo de Termos de Uso -->
+    <div id="terms-dialog" class="notification-overlay">
+        <div class="notification-box" style="text-align: left; max-width: 500px;">
+            <h3 style="text-align: center; color: var(--warning-color);">Termos de Uso e Regras</h3>
+            <p>Para equilibrar este site e garantir que tudo funcione corretamente, as seguintes regras devem ser seguidas:</p>
+            <ul style="padding-left: 20px; line-height: 1.6; margin-top: 15px;">
+                <li><strong>1. Conteúdo Adulto:</strong> Proibido pornografia ou qualquer conteúdo sexual.</li>
+                <li><strong>2. Fotos de Perfil:</strong> Proibido fotos de perfil que contenham conteúdos sexuais.</li>
+                <li><strong>3. Ferramentas Externas:</strong> Proibido uso de hacks ou softwares de terceiros não autorizados.</li>
+                <li><strong>4. Linguagem:</strong> Proibido uso de palavrões. Mantenha o respeito.</li>
+            </ul>
+            <p style="margin-top: 20px; font-size: 14px; text-align: center;">O descumprimento pode resultar em banimento.</p>
+            <div class="button-group-horizontal" style="margin-top: 20px; justify-content: center;">
+                <button id="terms-agree-button" class="btn btn-primary">Eu Entendi e Concordo</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Diálogo de Confirmação -->
     <div id="confirmation-dialog" class="notification-overlay">
         <div class="notification-box">
@@ -668,7 +723,7 @@
 
 
     <footer>
-        <p>Criado por @lucaspedro!</p>
+        <p>Criado por @lucaspedro! <a href="#" id="footer-terms-link" style="color: var(--secondary-color); text-decoration: none; margin-left: 10px;">Termos de Uso</a></p>
         <p style="margin-top: 8px; font-size: 11px; color: var(--text-color);">
             <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-shield-lock-fill" viewBox="0 0 16 16" style="vertical-align: -2px; margin-right: 4px;"><path fill-rule="evenodd" d="M8 0c-.69 0-1.843.265-2.928.56-1.11.3-2.229.655-2.887.87a1.54 1.54 0 0 0-1.044 1.262c-.596 4.477.787 7.795 2.465 9.99a11.777 11.777 0 0 0 2.517 2.453c.386.273.744.482 1.048.625.28.132.581.19.829.19s.548-.058.829-.19c.304-.143.662-.352 1.048-.625a11.775 11.775 0 0 0 2.517-2.453c1.678-2.195 3.061-5.513 2.465-9.99a1.541 1.541 0 0 0-1.044-1.263 62.468 62.468 0 0 0-2.887-.87C9.843.265 8.69 0 8 0zm0 5a1.5 1.5 0 0 1 .5 2.915l.385 1.99a.5.5 0 0 1-.491.595h-.788a.5.5 0 0 1-.49-.595l.384-1.99A1.5 1.5 0 0 1 8 5z"/></svg>
             Sua conta é protegida. Nem mesmo o administrador pode acessar seus dados pessoais.
@@ -683,9 +738,8 @@
         const welcomeMessage = document.getElementById('welcomeMessage');
         const actionButton = document.getElementById('actionButton');
         const partnerButton = document.getElementById('partnerButton');
+        const logoutButton = document.getElementById('logoutButton');
         const showPartnerButton = document.getElementById('showPartnerButton'); 
-        const maintenanceButton = document.getElementById('maintenanceButton');
-        const blockButton = document.getElementById('blockButton');
         const partnerFormContainer = document.getElementById('partner-form-container');
         const partnerNameInput = document.getElementById('partnerNameInput');
         const partnerAgeInput = document.getElementById('partnerAgeInput');
@@ -705,14 +759,14 @@
         const feedbackMessage = document.getElementById('feedbackMessage');
         const animatedNotification = document.getElementById('animated-notification');
         const loaderText = document.getElementById('loader-text');
+        const maintenanceButton = document.getElementById('maintenanceButton');
         const blockListContainer = document.getElementById('block-list-container');
-        const blockAgeInput = document.getElementById('blockAgeInput');
-        const blockInstagramInput = document.getElementById('blockInstagramInput');
-        const blockNameInput = document.getElementById('blockNameInput');
+        const blockIdInput = document.getElementById('blockIdInput');
+        const blockNameInput = document.getElementById('blockNameInput'); // NOVO: Input para o nome
+        const blockReasonInput = document.getElementById('blockReasonInput');
         const addBlockButton = document.getElementById('addBlockButton');
         const blockedUsersList = document.getElementById('blocked-users-list');
         const backFromBlockButton = document.getElementById('backFromBlockButton');
-        const blockedListTitle = document.getElementById('blocked-list-title');
         const maintenanceContainer = document.getElementById('maintenance-container');
         const confirmationDialog = document.getElementById('confirmation-dialog');
         const confirmationMessage = document.getElementById('confirmation-message');
@@ -727,6 +781,60 @@
         const supportMessageText = document.getElementById('supportMessageText');
         const sendSupportMessageButton = document.getElementById('sendSupportMessageButton');
         const backFromSupportMessageButton = document.getElementById('backFromSupportMessageButton');
+        const termsDialog = document.getElementById('terms-dialog');
+        const showTermsLink = document.getElementById('show-terms-link');
+        const termsAgreeButton = document.getElementById('terms-agree-button');
+        const termsLinkContainer = document.getElementById('terms-link-container');
+        const userIdDisplay = document.getElementById('userIdDisplay');
+        const viewVisitorsButton = document.getElementById('viewVisitorsButton');
+        const visitorsContainer = document.getElementById('visitors-container');
+        const backFromVisitorsButton = document.getElementById('backFromVisitorsButton');
+        const footerTermsLink = document.getElementById('footer-terms-link');
+
+        // --- INICIALIZAÇÃO E LÓGICA DO FACEBOOK SDK ---
+        window.fbAsyncInit = function() {
+            FB.init({
+                appId      : 'COLE_SEU_ID_DO_APLICATIVO_DO_FACEBOOK_AQUI',
+                cookie     : true,
+                xfbml      : true,
+                version    : 'v19.0' // Use uma versão recente da API
+            });
+            FB.AppEvents.logPageView();
+        };
+
+        (function(d, s, id){
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) {return;}
+            js = d.createElement(s); js.id = id;
+            js.src = "https://connect.facebook.net/pt_BR/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+
+        // Função para lidar com o login do Google
+        function handleCredentialResponse(response) {
+            // Decodifica o token JWT para obter as informações do usuário
+            const responsePayload = JSON.parse(atob(response.credential.split('.')[1]));
+
+            const userName = responsePayload.name;
+            const userPic = responsePayload.picture;
+
+            if (userName) {
+                // Gera um ID único para o novo usuário
+                if (!localStorage.getItem('userID')) {
+                    const newUserID = crypto.randomUUID();
+                    localStorage.setItem('userID', newUserID);
+                }
+
+                localStorage.setItem('userName', userName);
+                if (userPic) {
+                    localStorage.setItem('profilePicture', userPic);
+                }
+                // Recarrega a página para aplicar a lógica de login/manutenção
+                window.location.reload();
+            } else {
+                showAnimatedNotification('Erro!', 'Não foi possível obter seu nome do Google.', 'warning');
+            }
+        }
 
         function resetPage() {
             // Esconde todos os elementos de interação
@@ -737,6 +845,7 @@
             blockListContainer.classList.remove('fade-in-up');
             feedbackMessage.style.display = 'none';
             partnerFormContainer.style.display = 'none';
+            visitorsContainer.style.display = 'none';
             supportMessageContainer.style.display = 'none';
             // Mostra o conteúdo principal
             mainContent.style.display = 'flex';
@@ -786,14 +895,53 @@
             mainContent.style.display = 'flex';
             mainContent.classList.add('fade-in-up');
 
+            // Mostra o ID do usuário
+            const userID = localStorage.getItem('userID');
+            if (userID) {
+                userIdDisplay.textContent = `ID: ${userID}`;
+            }
             // Mostra o botão de visitantes apenas para o admin
             const isAdmin = name.toLowerCase() === 'lucaspedro';
             if (isAdmin) {
                 maintenanceButton.style.display = 'block';
+                // Adiciona o botão de banir dinamicamente para o admin
+                if (!document.getElementById('adminBanButton')) {
+                    const banBtn = document.createElement('button');
+                    banBtn.id = 'adminBanButton';
+                    banBtn.className = 'btn btn-red';
+                    banBtn.textContent = 'Banir Usuários';
+                    banBtn.addEventListener('click', showBlockList);
+                    // Insere o botão de banir depois do botão de manutenção
+                    maintenanceButton.insertAdjacentElement('afterend', banBtn);
+                }
+                viewVisitorsButton.style.display = 'block';
             } else {
                 maintenanceButton.style.display = 'none';
+                viewVisitorsButton.style.display = 'none';
             }
         }
+
+        // Lógica dos Termos de Uso
+        showTermsLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            termsDialog.classList.add('show');
+        });
+
+        termsAgreeButton.addEventListener('click', () => {
+            termsDialog.classList.remove('show');
+            confirmNameButton.disabled = false; // Habilita o botão
+            showAnimatedNotification('Obrigado!', 'Agora você pode confirmar seu nome.', 'success');
+        });
+
+        footerTermsLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            termsDialog.classList.add('show');
+        });
+
+        // Evento para abrir o seletor de arquivos ao clicar na foto
+        profilePic.addEventListener('click', () => {
+            profilePicInput.click();
+        });
 
         // Carrega a foto de perfil do localStorage
         function loadProfilePicture() {
@@ -803,8 +951,61 @@
             }
         }
 
+        // Adiciona o listener ao botão de confirmar nome
+        confirmNameButton.addEventListener('click', () => {
+            const userName = nameInput.value.trim();
+            if (userName) {
+                // Gera um ID único para o novo usuário
+                if (!localStorage.getItem('userID')) {
+                    const newUserID = crypto.randomUUID();
+                    localStorage.setItem('userID', newUserID);
+                }
+
+                localStorage.setItem('userName', userName);
+                // Recarrega a página para aplicar a lógica de manutenção corretamente
+                window.location.reload();
+            }
+        });
         // Verifica se o nome já está salvo no carregamento da página
+        // --- NOVO: Função para registrar o acesso do visitante ---
+        async function logVisitorAccess(userName, userID) {
+            // IMPORTANTE: Substitua a URL abaixo pela URL do seu webhook.
+            const webhookUrl = 'https://webhook.site/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'; // Exemplo: use um serviço como webhook.site
+            if (webhookUrl.includes('xxxxxxxx')) {
+                console.warn("Webhook URL não configurada. O acesso do visitante não será registrado.");
+                return;
+            }
+
+            try {
+                await fetch(webhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name: userName,
+                        id: userID,
+                        timestamp: new Date().toISOString()
+                    })
+                });
+            } catch (error) { console.error('Erro ao registrar visitante:', error); }
+        }
         window.addEventListener('load', () => {
+            // --- NOVA VERIFICAÇÃO DE BANIMENTO ---
+            const currentUserID = localStorage.getItem('userID');
+            const bannedUsers = getBlockedUsers();
+            const isBanned = bannedUsers.some(user => user.id === currentUserID);
+
+            if (isBanned) {
+                const banInfo = bannedUsers.find(user => user.id === currentUserID);
+                const bannedUserName = banInfo.name || 'este usuário'; // Pega o nome, ou usa um padrão
+                document.querySelector('.content-wrapper').innerHTML = `
+                    <div style="text-align: center; padding: 20px;">
+                        <h1 style="color: var(--danger-color);">Você foi banido</h1>
+                        <p>${bannedUserName} não pode mais acessar este site porque foi banido.</p>
+                        <p style="font-size: 14px; color: var(--warning-color);">Motivo: ${banInfo.reason || 'Não especificado'}</p>
+                    </div>`;
+                return; // Para a execução do script
+            }
+
             const savedName = localStorage.getItem('userName');
             if (savedName) {
                 const isAdmin = savedName.toLowerCase() === 'lucaspedro';
@@ -822,24 +1023,15 @@
             // Se não estiver em manutenção ou se for admin, continua normal
             if (savedName) {
                 loadProfilePicture();
+                const savedID = localStorage.getItem('userID');
+                logVisitorAccess(savedName, savedID); // Registra o acesso
                 showMainContent(savedName);
             } else {
                 nameContainer.style.display = 'flex';
                 showAnimatedNotification('Atenção!', 'Escolha seu nome apenas 1 vez.', 'info');
+                termsLinkContainer.style.display = 'block'; // Mostra o link dos termos
+                confirmNameButton.disabled = true; // Desabilita o botão de confirmar
             }
-        });
-        confirmNameButton.addEventListener('click', () => {
-            const userName = nameInput.value.trim();
-            if (userName) {
-                localStorage.setItem('userName', userName);
-                // Recarrega a página para aplicar a lógica de manutenção corretamente
-                window.location.reload();
-            }
-        });
-
-        // Evento para abrir o seletor de arquivos ao clicar na foto
-        profilePic.addEventListener('click', () => {
-            profilePicInput.click();
         });
 
         // Evento para quando um arquivo for selecionado
@@ -958,16 +1150,6 @@
                 return;
             }
 
-            // --- NEW BLOCKING CHECK ---
-            const blockedUsers = getBlockedUsers();
-            // Check if the potential partner's name is in the blocked list (case-insensitive)
-            const isPartnerBlocked = blockedUsers.some(blockedUser => blockedUser.name.toLowerCase() === name.toLowerCase());
-
-            if (isPartnerBlocked) {
-                showAnimatedNotification('Atenção!', `'${name}' está na sua lista de bloqueio. Você não pode escolher esta pessoa como parceiro.`, 'warning');
-                return; // Prevent adding partner if blocked
-            }
-            // --- END NEW BLOCKING CHECK ---
             if (age >= 30) {
                 showAnimatedNotification('Erro!', 'A idade não pode ser 30 anos ou mais.', 'warning');
             } else {
@@ -1058,83 +1240,82 @@
         function renderBlockedUsers() {
             const blockedUsers = getBlockedUsers();
             blockedUsersList.innerHTML = '';
-            if (blockedUsers.length > 0) {
-                blockedListTitle.style.display = 'block';
-                blockedUsers.forEach(user => {
-                    const li = document.createElement('li'); // Cria o item da lista
-                    const span = document.createElement('span'); // Cria o texto
-                    span.textContent = `${user.name} (Idade: ${user.age}, IG: @${user.instagram})`;
+            const listTitle = document.createElement('h3');
+            listTitle.textContent = 'Usuários Banidos:';
+            listTitle.style.marginTop = '10px';
+            blockedUsersList.appendChild(listTitle);
 
-                    const unblockBtn = document.createElement('button'); // Cria o botão
-                    unblockBtn.textContent = 'Desbloquear';
-                    unblockBtn.className = 'unblock-btn';
-
-                    unblockBtn.addEventListener('click', () => { // Adiciona o evento de clique
-                        const nameToUnblock = user.name;
-                        let currentBlocked = getBlockedUsers();
-                        currentBlocked = currentBlocked.filter(blockedUser => blockedUser.name !== nameToUnblock);
-                        saveBlockedUsers(currentBlocked);
-                        renderBlockedUsers(); // Re-render the list
-                        showAnimatedNotification('Sucesso!', `'${nameToUnblock}' foi desbloqueado.`);
-                    });
-
-                    li.appendChild(span);
-                    li.appendChild(unblockBtn); // Adiciona o botão ao item da lista
-                    blockedUsersList.appendChild(li);
-                });
-            } else {
-                blockedListTitle.style.display = 'none';
+            if (blockedUsers.length === 0) {
+                listTitle.textContent = 'Nenhum usuário banido.';
             }
+
+            blockedUsers.forEach(user => {
+                const li = document.createElement('li');
+                const span = document.createElement('span');
+                span.innerHTML = `${user.name ? `<strong>${user.name}</strong><br>` : ''}ID: <code>${user.id}</code><br><small>Motivo: ${user.reason || 'N/A'}</small>`;
+
+                const unblockBtn = document.createElement('button');
+                unblockBtn.textContent = 'Desbanir';
+                unblockBtn.className = 'unblock-btn';
+
+                unblockBtn.addEventListener('click', () => {
+                    let currentBlocked = getBlockedUsers();
+                    currentBlocked = currentBlocked.filter(blockedUser => blockedUser.id !== user.id);
+                    saveBlockedUsers(currentBlocked);
+                    renderBlockedUsers();
+                    showAnimatedNotification('Sucesso!', `O usuário com ID ${user.id} foi desbanido.`);
+                });
+
+                li.appendChild(span);
+                li.appendChild(unblockBtn);
+                blockedUsersList.appendChild(li);
+            });
         }
         
-        blockButton.addEventListener('click', () => {
+        function showBlockList() {
             mainContent.style.display = 'none';
             mainContent.classList.remove('fade-in-up');
             blockListContainer.style.display = 'flex';
             blockListContainer.classList.add('fade-in-up');
             renderBlockedUsers();
-        });
+        }
 
         addBlockButton.addEventListener('click', () => {
-            const nameToBlock = blockNameInput.value.trim(); // Changed from 'blockNameInput' to 'blockNameInput'
-            const ageToBlock = parseInt(blockAgeInput.value, 10);
-            const instagramToBlock = blockInstagramInput.value.trim();
+            const idToBlock = blockIdInput.value.trim();
+            const nameToBlock = blockNameInput.value.trim(); // NOVO: Pega o nome
+            const reason = blockReasonInput.value.trim();
 
-            if (!nameToBlock || !ageToBlock || !instagramToBlock) {
-                showAnimatedNotification('Atenção!', 'Por favor, preencha todos os campos para bloquear.', 'info');
+            if (!idToBlock) {
+                showAnimatedNotification('Atenção!', 'Por favor, insira o ID do usuário para banir.', 'info');
                 return;
             }
 
-            const userName = localStorage.getItem('userName');
-            if (nameToBlock.toLowerCase() === userName.toLowerCase()) {
-                showAnimatedNotification('Atenção!', 'Você não pode bloquear a si mesmo.', 'warning');
+            const adminID = localStorage.getItem('userID');
+            if (idToBlock === adminID) {
+                showAnimatedNotification('Atenção!', 'Você não pode banir a si mesmo.', 'warning');
                 return;
             }
             
             let blockedUsers = getBlockedUsers();
-            // Check if the person is already blocked by name (case-insensitive)
-            if (blockedUsers.some(user => user.name.toLowerCase() === nameToBlock.toLowerCase())) {
-                showAnimatedNotification('Aviso!', `'${nameToBlock}' já está na lista de bloqueio.`, 'info');
+            if (blockedUsers.some(user => user.id === idToBlock)) {
+                showAnimatedNotification('Aviso!', `O usuário com ID ${idToBlock} já está banido.`, 'info');
                 return;
             }
 
-            confirmationMessage.textContent = `Tem certeza que você deseja bloquear "${nameToBlock}" (Idade: ${ageToBlock}, Instagram: @${instagramToBlock})?`;
+            // Atualiza a mensagem de confirmação para incluir o nome
+            confirmationMessage.innerHTML = `Tem certeza que deseja banir o usuário ${nameToBlock ? `"${nameToBlock}"` : ''} com o ID:<br><code>${idToBlock}</code>?`;
             confirmationDialog.classList.add('show');
 
             confirmYesButton.onclick = () => {
-                const blockedPerson = {
-                    name: nameToBlock,
-                    age: ageToBlock,
-                    instagram: instagramToBlock
-                };
+                const blockedPerson = { id: idToBlock, name: nameToBlock, reason: reason }; // Adiciona o nome ao objeto
                 blockedUsers.push(blockedPerson);
                 saveBlockedUsers(blockedUsers);
                 renderBlockedUsers();
-                blockNameInput.value = ''; // Clear input fields
-                blockAgeInput.value = '';
-                blockInstagramInput.value = '';
+                blockIdInput.value = '';
+                blockNameInput.value = ''; // Limpa o novo campo de nome
+                blockReasonInput.value = '';
                 confirmationDialog.classList.remove('show');
-                showAnimatedNotification('Bloqueado!', `'${nameToBlock}' foi adicionado à lista de bloqueio.`);
+                showAnimatedNotification('Banido!', `O usuário foi adicionado à lista de banimento.`);
             };
 
             confirmNoButton.onclick = () => confirmationDialog.classList.remove('show');
@@ -1143,6 +1324,56 @@
         backFromBlockButton.addEventListener('click', () => {
             resetPage();
         });
+
+        // --- NOVO: Lógica para Visualização de Visitantes (Admin) ---
+        async function showVisitors() {
+            // IMPORTANTE: Substitua pela URL que busca os dados (ex: de um serviço como npoint.io ou seu backend)
+            const dataUrl = 'https://api.npoint.io/xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+            if (dataUrl.includes('xxxxxxxx')) {
+                showAnimatedNotification('Erro de Configuração', 'A URL para buscar os dados dos visitantes não foi definida.', 'warning');
+                return;
+            }
+
+            mainContent.style.display = 'none';
+            loader.style.display = 'flex';
+            loaderText.textContent = 'Buscando dados dos visitantes...';
+
+            try {
+                const response = await fetch(dataUrl);
+                const visitors = await response.json();
+                const visitorsList = document.getElementById('visitors-list');
+                visitorsList.innerHTML = ''; // Limpa a lista
+
+                // Mostra os visitantes em ordem decrescente (mais recente primeiro)
+                visitors.reverse().forEach(visitor => {
+                    const li = document.createElement('li');
+                    const visitDate = new Date(visitor.timestamp).toLocaleString('pt-BR');
+                    // NOVO: Adiciona um elemento <code> clicável para o ID
+                    li.innerHTML = `<strong style="color: var(--primary-color);">${visitor.name}</strong> (ID: <code class="copyable-id" title="Clique para copiar">${visitor.id}</code>) - <span style="font-size: 12px;">${visitDate}</span>`;
+                    li.style.cssText = 'background-color: var(--light-bg); padding: 8px; margin-bottom: 5px; border-radius: 5px; border-left: 3px solid var(--primary-color);';
+                    
+                    // NOVO: Adiciona o evento de clique para copiar o ID
+                    li.querySelector('.copyable-id').addEventListener('click', (e) => {
+                        e.stopPropagation(); // Impede que outros eventos de clique sejam acionados
+                        navigator.clipboard.writeText(visitor.id);
+                        showAnimatedNotification('Copiado!', `O ID ${visitor.id} foi copiado.`, 'info');
+                    });
+
+                    visitorsList.appendChild(li);
+                });
+
+                loader.style.display = 'none';
+                visitorsContainer.style.display = 'flex';
+            } catch (error) {
+                loader.style.display = 'none';
+                showAnimatedNotification('Erro!', 'Não foi possível carregar a lista de visitantes.', 'warning');
+                setTimeout(resetPage, 3000);
+            }
+        }
+
+        viewVisitorsButton.addEventListener('click', showVisitors);
+
+        backFromVisitorsButton.addEventListener('click', resetPage);
 
         maintenanceButton.addEventListener('click', () => {
             const maintenanceMode = localStorage.getItem('maintenanceMode');
@@ -1157,7 +1388,54 @@
                 window.location.reload();
             }, 3000);
         });
+
+        logoutButton.addEventListener('click', () => {
+            document.getElementById('confirmation-title').textContent = 'Sair da Conta?';
+            confirmationMessage.textContent = 'Tem certeza que deseja sair? Seus dados de participação ficarão salvos.';
+            confirmationDialog.classList.add('show');
+
+            confirmYesButton.onclick = () => {
+                // Limpa apenas os dados de sessão, mantendo os dados de participação
+                localStorage.removeItem('userName');
+                localStorage.removeItem('profilePicture');
+                window.location.reload();
+            };
+            confirmNoButton.onclick = () => confirmationDialog.classList.remove('show');
+        });
+
+        // Lógica do Botão de Login do Facebook
+        document.getElementById('facebookLoginButton').addEventListener('click', () => {
+            FB.login(function(response) {
+                if (response.authResponse) {
+                    // Usuário logado e autorizou o app
+                    FB.api('/me', {fields: 'name,picture.type(large)'}, function(apiResponse) {
+                        if (apiResponse && !apiResponse.error) {
+                            const userName = apiResponse.name;
+                            const userPic = apiResponse.picture.data.url;
+
+                            if (!localStorage.getItem('userID')) {
+                                const newUserID = crypto.randomUUID();
+                                localStorage.setItem('userID', newUserID);
+                            }
+                            localStorage.setItem('userName', userName);
+                            localStorage.setItem('profilePicture', userPic);
+                            window.location.reload();
+                        } else {
+                            showAnimatedNotification('Erro!', 'Não foi possível obter seus dados do Facebook.', 'warning');
+                        }
+                    });
+                } else {
+                    // Usuário cancelou o login ou não autorizou completamente
+                    showAnimatedNotification('Aviso!', 'O login com Facebook foi cancelado.', 'info');
+                }
+            }, {scope: 'public_profile,email'});
+        });
     </script>
 
 </body>
-</html>
+</html> 
+    </script>
+
+</body>
+</html>  
+    </script>
