@@ -1,631 +1,774 @@
 <!DOCTYPE html>
-<html lang="pt-PT">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Participação Os Mais Mais</title>
+    <title>Os mais mais</title>
     
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    
+    <!-- Babel -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['Outfit', 'sans-serif'] },
-                    animation: {
-                        'pop': 'pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                        'siren': 'siren 1s infinite',
-                    },
-                    keyframes: {
-                        'pop': { '0%': { transform: 'scale(0.9)', opacity: 0 }, '100%': { transform: 'scale(1)', opacity: 1 } },
-                        'siren': { '0%, 100%': { boxShadow: '0 0 20px rgba(220, 38, 38, 0.5)' }, '50%': { boxShadow: '0 0 40px rgba(220, 38, 38, 0.9)' } }
-                    }
-                }
-            }
-        }
-    </script>
+    
+    <!-- FontAwesome & Google Fonts -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
     <style>
-        body { background: #0b141a; color: #e9edef; font-family: 'Outfit', sans-serif; min-height: 100vh; overflow-x: hidden; }
-        .glass-card { background: rgba(32, 44, 51, 0.95); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
-        .solid-input { background: #2a3942; border: 1px solid #2a3942; color: #d1d7db; border-radius: 20px; padding: 12px 16px; width: 100%; outline: none; font-weight: 500; transition: 0.3s; }
-        .solid-input:focus { border-color: #00a884; background: #2a3942; }
-        .btn-action { background: #00a884; color: #111b21; padding: 14px; border-radius: 24px; font-weight: 800; width: 100%; transition: 0.2s; cursor: pointer; text-transform: uppercase; }
-        .btn-action:active { transform: scale(0.95); opacity: 0.9; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        .chat-bubble { max-width: 80%; padding: 8px 12px; margin-bottom: 4px; font-size: 0.95rem; word-wrap: break-word; position: relative; line-height: 1.4; box-shadow: 0 1px 0.5px rgba(0,0,0,0.13); }
-        .chat-me { background-color: #005c4b; color: #e9edef; align-self: flex-end; border-radius: 8px 0px 8px 8px; }
-        .chat-partner { background-color: #202c33; color: #e9edef; align-self: flex-start; border-radius: 0px 8px 8px 8px; }
-        #toast-container { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 90%; max-width: 400px; pointer-events: none; }
-        .toast-item { background: #202c33; color: white; padding: 12px 16px; border-radius: 12px; margin-bottom: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 12px; pointer-events: auto; animation: pop 0.4s ease; border-left: 4px solid #00a884; }
+        body { 
+            font-family: 'Roboto', sans-serif; 
+            background-color: #121212; 
+            color: #e3e3e3; 
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .google-font { font-family: 'Google Sans', sans-serif; }
+
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
+        
+        /* Surface Google Style */
+        .surface-card {
+            background-color: #1E1E1E;
+            border-radius: 28px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        /* Inputs Arredondados */
+        .google-input {
+            background-color: #2d2d2d;
+            border: 1px solid transparent;
+            border-radius: 9999px;
+            transition: all 0.2s;
+        }
+        .google-input:focus {
+            background-color: #353535;
+            border-color: #3b82f6; /* Blue Focus */
+            color: #ffffff;
+        }
+
+        /* Gradientes Azul e Rosa */
+        .gradient-btn {
+            background: linear-gradient(135deg, #3b82f6, #ec4899);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+        .gradient-btn:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 10px rgba(59, 130, 246, 0.3);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, #3b82f6, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Destaque Estúdio 34 */
+        .studio-highlight {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15), rgba(236, 72, 153, 0.15));
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        /* Animações */
+        .fade-in-up { animation: fadeInUp 0.4s cubic-bezier(0.0, 0.0, 0.2, 1); }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .scale-pop { animation: scalePop 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes scalePop { from { transform: scale(0.9); } to { transform: scale(1); } }
     </style>
 </head>
-<body>
+<body class="h-screen w-screen relative">
+    <div id="root" class="h-full w-full"></div>
 
-    <div id="app" class="min-h-screen w-full flex items-center justify-center p-2 pb-24 md:pb-4 bg-[#111b21]"></div>
-    <div id="toast-container"></div>
-    <div class="fixed bottom-1 right-2 text-[10px] text-gray-600 font-mono opacity-50 pointer-events-none z-50">v56.0 (Ultimate Fix)</div>
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
 
-    <!-- MODAIS E COMPONENTES -->
-    <div id="adminInputModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
-        <div class="glass-card p-6 w-full max-w-md bg-[#202c33]">
-            <h2 class="text-xl font-bold mb-4 text-[#e9edef]">Escrever Mensagem</h2>
-            <textarea id="adminInputText" class="solid-input h-32 mb-4" placeholder="Escreva aqui..."></textarea>
-            <div class="flex gap-3">
-                <button onclick="closeAdminInput()" class="flex-1 py-3 bg-gray-700 rounded-xl font-bold text-gray-300">Cancelar</button>
-                <button onclick="confirmAdminInput()" class="flex-1 py-3 bg-[#00a884] text-[#111b21] rounded-xl font-bold">Enviar</button>
-            </div>
-        </div>
-    </div>
-    
-    <div id="customModal" class="hidden fixed inset-0 z-[80] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 animate-pop">
-        <div class="glass-card p-6 w-full max-w-sm text-center border border-[#00a884] relative bg-[#202c33]">
-            <i id="customModalIcon" class="fas fa-question-circle text-5xl text-[#00a884] mb-4"></i>
-            <h3 id="customModalTitle" class="text-xl font-bold text-white mb-2">Título</h3>
-            <p id="customModalMsg" class="text-gray-300 text-sm mb-6">Mensagem aqui</p>
-            <input id="customModalInput" class="solid-input mb-4 hidden" placeholder="...">
-            <div class="flex gap-3">
-                <button onclick="closeCustomModal()" class="flex-1 py-3 bg-gray-700 rounded-xl font-bold text-gray-300">CANCELAR</button>
-                <button id="customModalAction" class="flex-1 py-3 bg-[#00a884] text-[#111b21] rounded-xl font-bold">CONFIRMAR</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modais Ocultos -->
-    <div id="spyModal" class="hidden fixed inset-0 z-[70] flex items-center justify-center bg-black/95 backdrop-blur-xl p-4 animate-pop"><div class="glass-card w-full max-w-2xl h-[90vh] flex flex-col relative border border-[#00a884] shadow-lg"><div class="p-4 border-b border-gray-700 flex justify-between items-center bg-[#202c33] rounded-t-2xl"><h3 class="font-bold text-white"><i class="fas fa-user-secret mr-2"></i> MODO ESPIÃO</h3><button onclick="closeSpyModal()" class="text-gray-400 hover:text-white"><i class="fas fa-times text-xl"></i></button></div><div id="spyContent" class="flex-1 flex flex-col p-6 overflow-hidden bg-[#0b141a]"></div></div></div>
-    <div id="quizModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center bg-black p-4"><div class="glass-card p-6 w-full max-w-lg bg-[#202c33] border border-[#00a884]"><button onclick="closeQuiz()" class="absolute top-4 right-4 text-gray-500"><i class="fas fa-times text-xl"></i></button><div id="quizContent"></div></div></div>
-    <div id="adminProfileModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center bg-black/90 p-4"><div class="glass-card w-full max-w-md p-8 rounded-3xl relative animate-pop bg-[#202c33]"><button onclick="closeAdminProfile()" class="absolute top-4 right-4 text-gray-400 hover:text-white"><i class="fas fa-times text-xl"></i></button><div id="adminProfileContent"></div></div></div>
-    <div id="msgModal" class="hidden fixed inset-0 z-40 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"><div class="glass-card p-6 w-full max-w-md relative bg-[#202c33]"><button onclick="closeMsgModal()" class="absolute top-4 right-4 text-gray-500 text-xl"><i class="fas fa-times"></i></button><h2 class="text-xl font-bold mb-4 text-[#00a884]"><i class="fas fa-envelope mr-2"></i> Notificações</h2><div id="msgList" class="space-y-4 max-h-60 overflow-y-auto"></div></div></div>
-
-    <script>
-        // --- CHAVE NOVA PARA RESETAR DADOS BUGADOS ---
-        const APP_KEY = 'osmaismais_v56_ultimate_clean';
-        const SESSION_KEY = 'osmaismais_session_v56';
+        // --- CONFIGURAÇÃO ---
+        const ADMIN_CREDENTIALS = { "lucas": "mestre123", "barbara": "rainha123" };
+        const ADMIN_DISPLAY_NAMES = { "lucas": "Lucas", "barbara": "Barbara" };
+        const ADMIN_NAMES_LOWER = Object.keys(ADMIN_CREDENTIALS);
         
-        // --- SISTEMA DE DADOS SEGURO ---
-        function getDatabase() {
-            try {
-                const data = localStorage.getItem(APP_KEY);
-                if (!data) return createDefaultDB();
-                const parsed = JSON.parse(data);
-                if (!parsed.users || !Array.isArray(parsed.users)) return createDefaultDB();
-                return parsed;
-            } catch(e) {
-                return createDefaultDB();
-            }
-        }
-        function createDefaultDB() {
-            return { users: [], logs: [], supportBox: [], reports: [], chats: [], maintenance: false };
-        }
-        function saveDatabase(data) { localStorage.setItem(APP_KEY, JSON.stringify(data)); }
+        const PLANS = {
+            free: { name: 'Básico', limit: 50 * 1024 * 1024, label: '50 MB', price: 0, color: 'text-gray-400' },
+            vip: { name: 'VIP', limit: 5 * 1024 * 1024 * 1024, label: '5 GB', price: 50, color: 'text-blue-400' },
+            king: { name: 'King', limit: 40 * 1024 * 1024 * 1024, label: '40 GB', price: 100, color: 'text-pink-400' }
+        };
 
-        function showToast(title, msg) {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = 'toast-item';
-            let colorClass = 'text-[#00a884]';
-            let icon = '<i class="fas fa-check-circle text-[#00a884] text-xl"></i>';
-            if (title.includes("Erro") || title.includes("Bloqueado")) {
-                toast.style.borderLeftColor = '#ef4444'; colorClass = 'text-red-500'; icon = '<i class="fas fa-exclamation-circle text-red-500 text-xl"></i>';
-            }
-            toast.innerHTML = `<div>${icon}</div><div><h4 class="font-bold text-sm uppercase ${colorClass}">${title}</h4><p class="text-xs text-gray-300">${msg}</p></div>`;
-            container.appendChild(toast);
-            setTimeout(() => toast.remove(), 4000);
-        }
+        const MAINTENANCE_TYPES = {
+            emergency: { label: "Emergência Geral", icon: "fa-triangle-exclamation", color: "text-red-500" },
+            auth: { label: "Autorização", icon: "fa-shield-halved", color: "text-blue-500" },
+            bugfix: { label: "Correção de Bugs", icon: "fa-bug", color: "text-yellow-500" },
+            update: { label: "Atualização", icon: "fa-bolt", color: "text-purple-500" }
+        };
 
-        let customModalCallback = null;
-        function showCustomModal({ title, msg, icon = 'fa-question-circle', showInput = false, inputPlaceholder = '', onConfirm }) {
-            document.getElementById('customModalTitle').innerText = title;
-            document.getElementById('customModalMsg').innerText = msg;
-            document.getElementById('customModalIcon').className = `fas ${icon} text-5xl text-[#00a884] mb-4`;
-            const input = document.getElementById('customModalInput');
-            if (showInput) { input.classList.remove('hidden'); input.value = ''; input.placeholder = inputPlaceholder; input.focus(); } else { input.classList.add('hidden'); }
-            customModalCallback = () => { const val = showInput ? input.value : true; if (showInput && !val) return showToast('Erro', 'Preencha o campo'); onConfirm(val); closeCustomModal(); };
-            document.getElementById('customModal').classList.remove('hidden');
-        }
-        function closeCustomModal() { document.getElementById('customModal').classList.add('hidden'); customModalCallback = null; }
-        document.getElementById('customModalAction').onclick = () => { if (customModalCallback) customModalCallback(); };
+        const generateId = () => Math.random().toString(36).substr(2, 9);
+        const formatTime = () => new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        const formatDate = () => new Date().toLocaleDateString('pt-BR');
+        const formatFullDate = () => `${formatDate()} às ${formatTime()}`;
 
-        function formatDate(isoString) {
-            if (!isoString) return '--:--';
-            const date = new Date(isoString);
-            return date.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' }) + ' ' + date.toLocaleDateString('pt-PT', { day: '2-digit', month: '2-digit' });
-        }
+        function App() {
+            const [users, setUsers] = useState(() => JSON.parse(localStorage.getItem('users')) || []);
+            const [chats, setChats] = useState(() => JSON.parse(localStorage.getItem('chats')) || {});
+            // INCLUÍDO 'news' no estado inicial
+            const [system, setSystem] = useState(() => JSON.parse(localStorage.getItem('system')) || { maintenance: false, maintenanceType: 'emergency', globalMsg: '', supportMsgs: [], securityLogs: [], news: [] });
+            const [currentUser, setCurrentUser] = useState(null);
+            const [view, setView] = useState('login'); 
+            const [notifications, setNotifications] = useState([]);
 
-        function ensureAdmin() {
-            const db = getDatabase();
-            const admins = [
-                { name: 'Bárbara Henrique', pass: '123', gender: 'female' }, 
-                { name: 'Lucas Pedro', pass: '123', gender: 'male' },
-                { name: 'Lucas Freire 80', pass: '123', gender: 'male' }
-            ];
-            let changed = false;
-            admins.forEach(ad => {
-                let existing = db.users.find(u => u.name.toLowerCase() === ad.name.toLowerCase());
-                if (!existing) {
-                    db.users.push({ 
-                        id: 'admin_' + ad.name.replace(/\s+/g, '').toLowerCase(), name: ad.name, password: ad.pass, role: 'admin', 
-                        photo: null, gender: ad.gender, messages: [], lastLogin: null, lastLogout: null, isOnline: false 
-                    });
-                    changed = true;
-                } else if (existing.role !== 'admin') { existing.role = 'admin'; changed = true; }
-            });
-            if(changed) saveDatabase(db);
-        }
-
-        const geniusQuiz = [
-            { q: "Quanto é 7 x 8 + 4 - 10?", options: ["42", "50", "60", "56"], ans: 1 },
-            { q: "Capital da Austrália?", options: ["Sydney", "Melbourne", "Canberra", "Perth"], ans: 2 }
-        ]; 
-        let currentQuizIndex = 0;
-        let maintenanceCheckInterval = null;
-        let currentAdminAction = null;
-        let currentTargetId = null;
-        let chatInterval = null;
-        let spyInterval = null;
-
-        const appDiv = document.getElementById('app');
-
-        function init() {
-            try {
-                ensureAdmin();
-                const user = getCurrentUser();
-                
-                // Redirecionamento Inicial
-                if (user) {
-                    // Já logado
-                    if (user.role === 'admin') {
-                         renderAdmin(user);
-                    } else {
-                         // Verifica banimento antes de mostrar painel
-                         if (checkBanned(user)) {
-                             renderBanned(user);
-                         } else {
-                             renderUser(user);
-                             checkNotifications(user);
-                         }
-                    }
-                    
-                    // Loop de manutenção/atualização
-                    if (maintenanceCheckInterval) clearInterval(maintenanceCheckInterval);
-                    maintenanceCheckInterval = setInterval(checkGlobalMaintenance, 2000);
-
-                } else {
-                    renderLogin();
-                }
-
-            } catch (e) {
-                console.error("Erro Fatal no Init:", e);
-                localStorage.removeItem(APP_KEY);
-                location.reload();
-            }
-        }
-
-        // --- CORE: VERIFICAÇÃO DE ESTADO ---
-        function checkGlobalMaintenance() {
-            const db = getDatabase();
-            const user = getCurrentUser();
-            
-            // Se não tem user, não faz sentido verificar ban/etc aqui, o login trata disso
-            if (!user) {
-                // Se o site está em manutenção e estamos no login, podemos mostrar o aviso, mas o login já trata disso
-                return;
-            }
-
-            // PRIORIDADE: SE ESTIVER BANIDO
-            if (user.role !== 'admin' && checkBanned(user)) {
-                if (!document.getElementById('bannedScreen')) {
-                    renderBanned(user);
-                }
-                return; 
-            }
-
-            const isAdminView = document.body.innerText.includes("PAINEL ADMIN");
-            const isUserView = document.getElementById('userPanel') !== null;
-            const isMaintenanceView = document.body.innerText.includes("SITE FECHADO");
-
-            if (db.maintenance) {
-                if (user.role !== 'admin') { 
-                    // Expulsar user comum
-                    localStorage.removeItem(SESSION_KEY); 
-                    renderMaintenance(); 
-                    return; 
-                }
-                if (!isAdminView) renderAdmin(user);
-            } else {
-                // Site normal
-                if (user.role === 'admin') { 
-                    if (!isAdminView) renderAdmin(user); 
-                } else { 
-                    if (!isUserView) { renderUser(user); checkNotifications(user); } 
-                }
-            }
-        }
-
-        function getCurrentUser() { const id = localStorage.getItem(SESSION_KEY); return id ? getDatabase().users.find(u => u.id === id) : null; }
-        
-        function checkBanned(user) { 
-            if (!user.banned) return false; 
-            if (user.banned.type === 'permanent') return true; 
-            if (user.banned.expires && new Date(user.banned.expires) > new Date()) return true;
-            // Se expirou
-            const db = getDatabase(); db.users.find(u => u.id === user.id).banned = false; saveDatabase(db); return false; 
-        }
-        
-        function checkNotifications(user) { const unread = (user.messages || []).filter(m => !m.read); if (unread.length > 0) { showToast("Admin", `Tens ${unread.length} mensagem(ns).`); } }
-        
-        function renderMaintenance() {
-            appDiv.innerHTML = `<div class="glass-card p-10 text-center border-4 border-red-600 w-full max-w-lg animate-siren"><i class="fas fa-lock text-8xl text-red-500 mb-6"></i><h1 class="text-4xl font-black text-white mb-2">SITE FECHADO</h1><p class="text-xl font-bold text-red-400 mb-8">MANUTENÇÃO</p><button onclick="renderLogin(false)" class="w-full py-4 bg-gray-800 hover:bg-gray-700 text-white rounded-xl font-black">SOU ADMINISTRADOR</button></div>`;
-        }
-
-        function renderLogin(isRegister = false) { 
-            appDiv.innerHTML = `
-                <div class="w-full max-w-sm animate-pop">
-                    <div class="glass-card p-8 text-center relative overflow-hidden bg-[#202c33]">
-                        <div class="w-20 h-20 bg-[#00a884] rounded-full mx-auto mb-4 flex items-center justify-center text-2xl font-black shadow-lg">M+</div>
-                        <h1 class="text-3xl font-bold mb-2 text-[#e9edef]">Os Mais Mais</h1>
-                        <p class="text-gray-400 text-sm mb-8">Login Seguro</p>
-                        
-                        ${isRegister ? `
-                            <!-- REGISTRO CORRIGIDO -->
-                            <div class="space-y-4 text-left">
-                                <div><label class="text-xs font-bold text-gray-400 ml-1">NOME DE USUÁRIO</label><input id="regName" class="solid-input mt-1"></div>
-                                <div><label class="text-xs font-bold text-gray-400 ml-1">SENHA</label><input id="regPass" type="password" class="solid-input mt-1"></div>
-                                <div><label class="text-xs font-bold text-gray-400 ml-1">IDADE</label><input id="regAge" type="number" class="solid-input mt-1"></div>
-                                <button id="regBtn" onclick="doRegister()" class="btn-action mt-2">CRIAR CONTA</button>
-                                <button onclick="renderLogin(false)" class="w-full mt-2 text-xs text-gray-500 hover:text-white font-bold py-2">VOLTAR</button>
-                            </div>
-                        ` : `
-                            <!-- LOGIN -->
-                            <div class="space-y-4 text-left">
-                                <div><label class="text-xs font-bold text-gray-400 ml-1">NOME</label><input id="name" class="solid-input mt-1"></div>
-                                <div><label class="text-xs font-bold text-gray-400 ml-1">SENHA</label><input id="pass" type="password" class="solid-input mt-1"></div>
-                                <button id="loginBtn" onclick="doLogin()" class="btn-action mt-2">ENTRAR</button>
-                                <button onclick="renderLogin(true)" class="w-full mt-2 text-xs text-[#00a884] font-bold py-2 hover:underline">CRIAR NOVA CONTA</button>
-                            </div>
-                        `}
-                        
-                        <div class="mt-6 pt-4 border-t border-gray-700">
-                            <button onclick="startQuiz()" class="text-xs text-gray-600 hover:text-white uppercase font-bold tracking-widest">Acesso Restrito</button>
-                        </div>
-                    </div>
-                </div>`; 
-        }
-
-        // --- LÓGICA DE LOGIN ---
-        function doLogin() {
-            try {
-                const nInput = document.getElementById('name');
-                const pInput = document.getElementById('pass');
-                if(!nInput || !pInput) return; // Segurança contra erro de troca de tela
-
-                const n = nInput.value.trim();
-                const p = pInput.value.trim();
-                const db = getDatabase();
-
-                if (!n || !p) return showToast('Erro', 'Preencha tudo.');
-
-                if(db.maintenance) { 
-                    if(!['bárbara henrique', 'lucas pedro', 'lucas freire 80'].includes(n.toLowerCase())) return renderMaintenance(); 
-                }
-                const u = db.users.find(x => x.name.toLowerCase() === n.toLowerCase() && x.password === p);
-                if(u) { 
-                    if(checkBanned(u)){ renderBanned(u); return; } 
-                    localStorage.setItem(SESSION_KEY, u.id); 
-                    u.lastLogin = new Date().toISOString(); 
-                    u.isOnline = true; 
-                    saveDatabase(db); 
-                    
-                    // FORÇA INIT IMEDIATO
-                    init(); 
-                } else { showToast('Erro', 'Dados Incorretos'); }
-            } catch(e) {
-                console.error(e);
-            }
-        }
-
-        // --- LÓGICA DE REGISTRO CORRIGIDA ---
-        function doRegister() {
-            const btn = document.getElementById('regBtn');
-            if(btn) btn.innerText = "...";
-            
-            try {
-                const db = getDatabase();
-                if(db.maintenance) return renderMaintenance(); 
-                
-                // Pega os elementos com segurança
-                const nInput = document.getElementById('regName');
-                const pInput = document.getElementById('regPass');
-                const aInput = document.getElementById('regAge');
-
-                if(!nInput || !pInput || !aInput) {
-                    // Se os elementos não existem, algo está errado com o render, recarrega
-                    return renderLogin(true);
-                }
-
-                const n = nInput.value.trim();
-                const p = pInput.value.trim();
-                const a = aInput.value;
-                
-                if(!n||!p||!a) {
-                    if(btn) btn.innerText = "CRIAR CONTA";
-                    return showToast('Erro', 'Preencha tudo');
-                }
-                
-                if(db.users.find(x => x.name.toLowerCase() === n.toLowerCase())) {
-                    if(btn) btn.innerText = "CRIAR CONTA";
-                    if(['bárbara henrique', 'lucas pedro', 'lucas freire 80'].includes(n.toLowerCase())) return showToast('Aviso', 'Admin já existe! Use o botão ENTRAR.');
-                    return showToast('Erro', 'Nome já existe.');
-                }
-                
-                const nu = { 
-                    id: Date.now().toString(), name: n, password: p, age: a, role: 'user', 
-                    themePref: 'dark', banned: false, messages: [], photo: null, 
-                    lastLogin: new Date().toISOString(), lastLogout: null, isOnline: true
+            // Sincronização e Vigilante
+            useEffect(() => {
+                const sync = () => {
+                    const sys = JSON.parse(localStorage.getItem('system')) || { maintenance: false };
+                    setSystem(sys);
+                    setUsers(JSON.parse(localStorage.getItem('users')) || []);
+                    setChats(JSON.parse(localStorage.getItem('chats')) || {});
                 };
-                db.users.push(nu); 
-                saveDatabase(db); 
-                localStorage.setItem(SESSION_KEY, nu.id); 
+                window.addEventListener('storage', sync);
                 
-                showToast('Sucesso', 'A entrar...');
-                
-                // ENTRADA IMEDIATA
-                if(nu.role === 'admin') renderAdmin(nu);
-                else renderUser(nu);
-                
-                // Inicia loop de verificação
-                if (maintenanceCheckInterval) clearInterval(maintenanceCheckInterval);
-                maintenanceCheckInterval = setInterval(checkGlobalMaintenance, 2000);
+                const watcher = setInterval(() => {
+                    const currentSys = JSON.parse(localStorage.getItem('system'));
+                    if (currentSys && currentSys.maintenance) {
+                        setSystem(currentSys);
+                        if (currentUser && !currentUser.isAdmin) {
+                            setView('maintenance');
+                        } else if (!currentUser && view === 'login') {
+                            setView('maintenance');
+                        }
+                    } else if (currentSys && !currentSys.maintenance && view === 'maintenance') {
+                        setSystem(currentSys);
+                        setView(currentUser ? 'app' : 'login');
+                    }
+                }, 1000);
 
-            } catch(e) {
-                console.error(e);
-                if(btn) btn.innerText = "CRIAR CONTA";
-                showToast('Erro', 'Erro crítico. Tente recarregar.');
-            }
-        }
+                return () => {
+                    window.removeEventListener('storage', sync);
+                    clearInterval(watcher);
+                };
+            }, [currentUser, view]);
 
-        function logout() { const id=localStorage.getItem(SESSION_KEY); if(id){const db=getDatabase(); const u=db.users.find(x=>x.id===id); if(u){u.lastLogout=new Date().toISOString(); u.isOnline=false; saveDatabase(db);}} localStorage.removeItem(SESSION_KEY); if(chatInterval) clearInterval(chatInterval); init(); }
-        
-        function startQuiz() { currentQuizIndex = 0; document.getElementById('quizModal').classList.remove('hidden'); renderQuizQuestion(); }
-        function closeQuiz() { document.getElementById('quizModal').classList.add('hidden'); }
-        function renderQuizQuestion() { const q = geniusQuiz[currentQuizIndex]; document.getElementById('quizContent').innerHTML = `<div class="text-center mb-6"><h3 class="text-xl font-bold text-white mb-6 text-center">${q.q}</h3><div class="grid gap-3">${q.options.map((opt, i) => `<div onclick="checkAnswer(${i})" class="bg-[#111b21] border border-gray-600 p-3 rounded-lg text-white hover:bg-[#00a884] cursor-pointer">${opt}</div>`).join('')}</div>`; }
-        function checkAnswer(idx) { if (idx === geniusQuiz[currentQuizIndex].ans) { currentQuizIndex++; if (currentQuizIndex >= geniusQuiz.length) showQuizVictory(); else renderQuizQuestion(); } else { document.getElementById('quizContent').innerHTML = `<div class="text-center py-6"><h2 class="text-2xl font-bold text-red-500 mb-2">ERROU</h2><button onclick="closeQuiz()" class="btn-action bg-red-600 mt-4">SAIR</button></div>`; } }
-        function showQuizVictory() { document.getElementById('quizContent').innerHTML = `<div class="text-center py-6"><h2 class="text-2xl font-bold text-[#00a884] mb-2">ACESSO ADMIN</h2><p>Bárbara Henrique<br>Lucas Pedro</p><p class="text-xs text-gray-500 mt-2">Senha: 123</p><button onclick="closeQuiz()" class="btn-action mt-4">OK</button></div>`; }
-        function toggleMaintenance() { const db=getDatabase(); db.maintenance=!db.maintenance; saveDatabase(db); showToast('Sistema', db.maintenance?'FECHADO':'ABERTO'); renderAdmin(getCurrentUser()); }
-        
-        function openSpyModal(targetId) { if (spyInterval) clearInterval(spyInterval); currentTargetId = targetId; document.getElementById('spyModal').classList.remove('hidden'); updateSpyContent(); spyInterval = setInterval(updateSpyContent, 2000); }
-        function closeSpyModal() { document.getElementById('spyModal').classList.add('hidden'); if (spyInterval) clearInterval(spyInterval); }
-        function updateSpyContent() {
-            const db = getDatabase(); const u = db.users.find(x => x.id === currentTargetId);
-            if (!u) return closeSpyModal();
-            const partner = u.partnerId ? db.users.find(x => x.id === u.partnerId) : null;
-            const chatLogs = db.chats.filter(c => c.fromId === u.id || c.toId === u.id).sort((a,b) => a.timestamp - b.timestamp);
-            const content = document.getElementById('spyContent');
-            content.innerHTML = `<div class="flex items-center gap-4 mb-6 pb-6 border-b border-gray-800"><img src="${u.photo || `https://api.dicebear.com/7.x/avataaars/svg?seed=${u.name}`}" class="w-20 h-20 rounded-full border-4 border-red-600 bg-gray-900"><div><h2 class="text-3xl font-black text-white">${u.name}</h2><div class="flex gap-4 text-sm mt-1"><span class="text-gray-400 bg-gray-800 px-2 py-1 rounded">Senha: <b class="text-white">${u.password}</b></span><span class="text-gray-400 bg-gray-800 px-2 py-1 rounded">Email: <b class="text-white">${u.email || 'N/A'}</b></span></div><div class="mt-2 text-sm text-blue-400">Parceiro: <b class="text-white">${partner ? partner.name : (u.partnerDisplay ? u.partnerDisplay.name + ' (Visual)' : 'Nenhum')}</b></div></div></div><div class="flex-1 bg-black/50 rounded-xl p-4 overflow-y-auto flex flex-col gap-2 border border-gray-800"><h3 class="text-xs font-bold text-gray-500 uppercase mb-2 sticky top-0 bg-black/80 p-2">Histórico de Conversa (Ao Vivo)</h3>${chatLogs.length === 0 ? '<p class="text-gray-600 text-center text-sm py-10">Nenhuma conversa encontrada.</p>' : ''}${chatLogs.map(log => {const isTarget = log.fromId === u.id; const senderName = isTarget ? u.name : (log.fromId === u.partnerId && partner ? partner.name : 'Outro'); return `<div class="flex flex-col ${isTarget ? 'items-end' : 'items-start'}"><span class="text-[10px] text-gray-500 mb-1 px-1">${senderName} • ${new Date(log.timestamp).toLocaleTimeString()}</span><div class="${isTarget ? 'chat-me' : 'chat-partner'} text-sm px-3 py-2 rounded-lg">${log.text}</div></div>`; }).join('')}</div>`;
-        }
+            // --- FAXINA AUTOMÁTICA ---
+            useEffect(() => {
+                const rawUsers = JSON.parse(localStorage.getItem('users')) || [];
+                const uniqueUsersMap = new Map();
+                let hasDuplicates = false;
 
-        function openAdminProfile() { const u = getCurrentUser(); document.getElementById('adminProfileModal').classList.remove('hidden'); renderAdminProfileContent(u); }
-        function closeAdminProfile() { document.getElementById('adminProfileModal').classList.add('hidden'); renderAdmin(getCurrentUser()); }
-        function renderAdminProfileContent(u) { document.getElementById('adminProfileContent').innerHTML = `<div class="text-center"><h2 class="text-2xl font-black text-white">${u.name}</h2><p class="text-yellow-500 font-bold text-xs uppercase mb-6">Admin</p><div class="text-left space-y-4"><div><label class="text-xs font-bold text-gray-500">ALTERAR SENHA</label><input id="adminNewPass" value="${u.password}" class="solid-input !bg-black !border-yellow-900/50 text-yellow-100"></div><button onclick="saveAdminProfile()" class="w-full py-3 bg-yellow-600 hover:bg-yellow-500 text-black font-black rounded-xl uppercase">Salvar Alterações</button></div></div>`; }
-        function saveAdminProfile() { const p = document.getElementById('adminNewPass').value.trim(); if(!p) return alert("Senha vazia!"); const db = getDatabase(); db.users.find(x => x.id === getCurrentUser().id).password = p; saveDatabase(db); alert("Perfil de Admin Atualizado!"); closeAdminProfile(); }
-
-        // --- SISTEMA DE BANIMENTO FIXO (ATUALIZADO) ---
-        function renderBanned(user) {
-            const reason = user.banned.reason || "Violação das regras.";
-            appDiv.innerHTML = `
-                <div id="bannedScreen" class="fixed inset-0 bg-[#0b141a] z-50 flex items-center justify-center p-4">
-                    <div class="glass-card p-8 text-center border-2 border-red-600 w-full max-w-md animate-pop relative">
-                        <i class="fas fa-ban text-8xl text-red-500 mb-6 drop-shadow-lg"></i>
-                        <h1 class="text-4xl font-black text-white mb-2 tracking-tighter">CONTA BLOQUEADA</h1>
-                        <div class="bg-black/40 p-4 rounded-xl mb-6 border border-red-500/30">
-                            <p class="text-red-200 text-xs font-bold uppercase mb-1">MOTIVO:</p>
-                            <p class="text-white font-bold text-lg">"${reason}"</p>
-                        </div>
-                        <div class="bg-black/40 p-4 rounded-xl mb-6 text-left border border-white/10">
-                            <label class="text-xs font-bold text-gray-400 mb-2 block uppercase"><i class="fas fa-pray mr-1"></i> Pedir Segunda Chance</label>
-                            <textarea id="appealText" class="solid-input h-24 mb-2 !text-sm !bg-gray-900 border-gray-700" placeholder="Mensagem para o Administrador..."></textarea>
-                            <button onclick="sendAppeal('${user.id}')" class="w-full bg-white text-red-900 font-black py-3 rounded-xl text-sm hover:bg-gray-200 transition">ENVIAR APELO</button>
-                        </div>
-                        <button onclick="logout()" class="text-red-400 font-bold text-xs hover:text-white uppercase tracking-widest border border-red-500/30 px-4 py-2 rounded-lg">Sair da Conta</button>
-                    </div>
-                </div>
-            `;
-        }
-
-        function toggleBan(id, doBan) {
-            const db = getDatabase();
-            const u = db.users.find(x => x.id === id);
-            if (doBan) {
-                showCustomModal({
-                    title: "Banir Utilizador",
-                    msg: "Escreva o motivo para o utilizador ver:",
-                    icon: 'fa-gavel',
-                    showInput: true,
-                    inputPlaceholder: "Ex: Linguagem ofensiva",
-                    onConfirm: (reason) => {
-                        u.banned = { type: 'permanent', reason: reason };
-                        saveDatabase(db);
-                        renderAdmin(getCurrentUser());
+                rawUsers.forEach(u => {
+                    const key = u.username.toLowerCase().trim();
+                    if (uniqueUsersMap.has(key)) {
+                        hasDuplicates = true;
+                        const existing = uniqueUsersMap.get(key);
+                        if ((u.isAdmin && !existing.isAdmin) || (u.isVerified && !existing.isVerified)) {
+                             uniqueUsersMap.set(key, u);
+                        }
+                    } else {
+                        uniqueUsersMap.set(key, u);
                     }
                 });
-            } else {
-                u.banned = false;
-                saveDatabase(db);
-                renderAdmin(getCurrentUser());
-            }
-        }
 
-        function sendAppeal(userId) {
-            const t = document.getElementById('appealText').value.trim();
-            if(!t) return showToast('Erro', 'Escreve alguma coisa');
-            const db = getDatabase();
-            const u = db.users.find(x => x.id === userId);
-            db.supportBox.unshift({
-                userName: u.name + " [BLOQUEADO]",
-                userId: u.id,
-                text: "[PEDIDO DE DESBLOQUEIO] " + t,
-                date: new Date().toLocaleString(),
-                resolved: false
-            });
-            saveDatabase(db);
-            alert("O teu pedido foi enviado aos Administradores. Aguarda.");
-            document.getElementById('appealText').value = '';
-        }
-
-        function saveProfile() { const n=document.getElementById('newName').value.trim(), p=document.getElementById('newPass').value.trim(); if(!n) return; const db=getDatabase(), u=db.users.find(x=>x.id===getCurrentUser().id); u.name=n; if(p) u.password=p; saveDatabase(db); showToast('Ok', 'Salvo'); renderUser(u,'perfil'); }
-        function linkPartner() { const t=document.getElementById('partnerSearch').value.trim(); if(!t)return; const db=getDatabase(); const u=db.users.find(x=>x.id===getCurrentUser().id); const target=db.users.find(x=>x.name===t); if(target){if(target.id===u.id||target.partnerId)return showToast('Erro','Inválido'); showCustomModal({title:"Parceiro Encontrado!",msg:`Desejas iniciar a participação com ${target.name}?`,icon:'fa-user-check',confirmText:'PARTICIPAR COM ELE',confirmColor:'bg-[#00a884]',onConfirm:()=>{u.partnerId=target.id; target.partnerId=u.id; u.partnerDisplay=null; saveDatabase(db); showToast('Sucesso','Participação iniciada!'); renderUser(u,'parceiro');}});}else{showCustomModal({title:"Utilizador Desconhecido",msg:`"${t}" não foi encontrado. Queres criar um perfil visual?`,icon:'fa-user-slash',showInput:true,inputPlaceholder:"Digite a idade",onConfirm:(age)=>{u.partnerDisplay={name:t,age:age};u.partnerId=null;saveDatabase(db);renderUser(u,'parceiro');}});}}
-        function removePartner() { showCustomModal({title:"Remover Parceiro",msg:"Tens a certeza?",icon:'fa-heart-broken',onConfirm:()=>{const db=getDatabase(), u=db.users.find(x=>x.id===getCurrentUser().id); if(u.partnerId){const p=db.users.find(x=>x.id===u.partnerId); if(p)p.partnerId=null; u.partnerId=null;} u.partnerDisplay=null; saveDatabase(db); renderUser(u,'parceiro');}}); }
-        function sendChat() { const t=document.getElementById('chatInput').value.trim(); if(!t)return; const u=getCurrentUser(), db=getDatabase(); db.chats.push({fromId:u.id, toId:u.partnerId, text:t, timestamp:Date.now(), read:false}); saveDatabase(db); document.getElementById('chatInput').value=''; loadChat(); }
-        function loadChat() { const u=getCurrentUser(), db=getDatabase(), area=document.getElementById('chatArea'); if(!area)return; let hasUpdate=false; db.chats.forEach(c=>{if(c.toId===u.id&&!c.read){c.read=true;hasUpdate=true;}}); if(hasUpdate)saveDatabase(db); const msgs=db.chats.filter(c=>(c.fromId===u.id&&c.toId===u.partnerId)||(c.fromId===u.partnerId&&c.toId===u.id)); area.innerHTML=msgs.map(m=>`<div class="flex ${m.fromId===u.id?'justify-end':'justify-start'}"><div class="chat-bubble ${m.fromId===u.id?'chat-me':'chat-partner'}">${m.text}<div class="chat-time">${new Date(m.timestamp).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</div></div></div>`).join(''); area.scrollTop=area.scrollHeight; }
-        function sendSupport() { const t=document.getElementById('supportMsg').value.trim(); if(!t)return; const db=getDatabase(); db.reports.unshift({reporterName:getCurrentUser().name, description:'SUPORTE: '+t, date:new Date().toLocaleString()}); saveDatabase(db); document.getElementById('supportMsg').value=''; showToast('Ok', 'Enviado'); }
-        function sendReport() { const d=document.getElementById('reportDesc').value; if(!d&&!tempReportImage)return showToast('Erro','Vazio'); const db=getDatabase(); db.reports.unshift({reporterName:getCurrentUser().name, description:d, image:tempReportImage, date:new Date().toLocaleString()}); saveDatabase(db); tempReportImage=null; showToast('Ok','Denúncia Enviada'); renderUser(getCurrentUser(),'denunciar'); }
-        function previewReport(i) { if(i.files[0]){const r=new FileReader(); r.onload=(e)=>{tempReportImage=e.target.result;document.getElementById('reportPreview').src=e.target.result;document.getElementById('reportPreview').classList.remove('hidden')}; r.readAsDataURL(i.files[0]);}}
-        function uploadPhoto(i) { if(i.files[0]){const r=new FileReader(); r.onload=(e)=>{const db=getDatabase(); db.users.find(x=>x.id===getCurrentUser().id).photo=e.target.result; saveDatabase(db); renderUser(getCurrentUser(),'perfil')}; r.readAsDataURL(i.files[0]);}}
-        function delReport(idx){const db=getDatabase(); db.reports.splice(idx,1); saveDatabase(db); renderAdmin(getCurrentUser());}
-        function openAdminInput(act,idx,id){currentAdminAction=act;currentTargetId=id;window.currentMsgIdx=idx;document.getElementById('adminInputModal').classList.remove('hidden');}
-        function closeAdminInput(){document.getElementById('adminInputModal').classList.add('hidden');}
-        function confirmAdminInput(){const t=document.getElementById('adminInputText').value; const db=getDatabase(); const u=db.users.find(x=>x.id===currentTargetId); if(u){if(!u.messages)u.messages=[]; u.messages.push({from:'Administrador',text:t,read:false}); if(currentAdminAction==='reply' && window.currentMsgIdx!==null) db.supportBox[window.currentMsgIdx].resolved=true; saveDatabase(db); showToast('Ok','Enviado'); closeAdminInput();}}
-        function toggleMsgModal(){const el=document.getElementById('msgModal'); if(el.classList.contains('hidden')){const u=getCurrentUser(); document.getElementById('msgList').innerHTML=u.messages.length?u.messages.map(m=>`<div class="bg-gray-800 p-3 rounded mb-2"><p class="font-bold text-[#00a884]">${m.from}</p><p class="text-white">${m.text}</p></div>`).join(''):'Vazio'; const db=getDatabase(); db.users.find(x=>x.id===u.id).messages.forEach(m=>m.read=true); saveDatabase(db); el.classList.remove('hidden');}else el.classList.add('hidden');}
-        function closeMsgModal(){document.getElementById('msgModal').classList.add('hidden'); renderUser(getCurrentUser());}
-        function promptChangePassword(id) { openAdminProfile(); }
-        function startQuiz() { currentQuizIndex = 0; document.getElementById('quizModal').classList.remove('hidden'); renderQuizQuestion(); }
-        function closeQuiz() { document.getElementById('quizModal').classList.add('hidden'); }
-        function renderQuizQuestion() { const q = geniusQuiz[currentQuizIndex]; document.getElementById('quizContent').innerHTML = `<div class="text-center mb-6"><h3 class="text-xl font-bold text-white mb-6 text-center">${q.q}</h3><div class="grid gap-3">${q.options.map((opt, i) => `<div onclick="checkAnswer(${i})" class="bg-[#111b21] border border-gray-600 p-3 rounded-lg text-white hover:bg-[#00a884] cursor-pointer">${opt}</div>`).join('')}</div>`; }
-        function checkAnswer(idx) { if (idx === geniusQuiz[currentQuizIndex].ans) { currentQuizIndex++; if (currentQuizIndex >= geniusQuiz.length) showQuizVictory(); else renderQuizQuestion(); } else { document.getElementById('quizContent').innerHTML = `<div class="text-center py-6"><h2 class="text-2xl font-bold text-red-500 mb-2">ERROU</h2><button onclick="closeQuiz()" class="btn-action bg-red-600 mt-4">SAIR</button></div>`; } }
-        function showQuizVictory() { document.getElementById('quizContent').innerHTML = `<div class="text-center py-6"><h2 class="text-2xl font-bold text-[#00a884] mb-2">ACESSO ADMIN</h2><p>Bárbara Henrique<br>Lucas Pedro</p><p class="text-xs text-gray-500 mt-2">Senha: 123</p><button onclick="closeQuiz()" class="btn-action mt-4">OK</button></div>`; }
-        function toggleMaintenance() { const db=getDatabase(); db.maintenance=!db.maintenance; saveDatabase(db); showToast('Sistema', db.maintenance?'FECHADO':'ABERTO'); renderAdmin(getCurrentUser()); }
-        
-        function adminRemovePartner(userId) {
-            if(!confirm("Remover parceiro deste usuário?")) return;
-            const db = getDatabase();
-            const u = db.users.find(x => x.id === userId);
-            if (u) {
-                if (u.partnerId) {
-                    const p = db.users.find(x => x.id === u.partnerId);
-                    if (p) { p.partnerId = null; p.messages.push({from: 'Sistema', text: 'O Administrador removeu o teu parceiro.', date: new Date().toLocaleString(), read: false}); }
+                if (hasDuplicates) {
+                    const cleanUsers = Array.from(uniqueUsersMap.values());
+                    setUsers(cleanUsers);
+                    localStorage.setItem('users', JSON.stringify(cleanUsers));
                 }
-                u.partnerId = null;
-                u.partnerDisplay = null;
-                u.messages.push({from: 'Sistema', text: 'O Administrador removeu o teu parceiro.', date: new Date().toLocaleString(), read: false});
-                saveDatabase(db);
-                renderAdmin(getCurrentUser());
-                showToast("Sucesso", "Parceiro removido.");
-            }
-        }
-        
-        function renderAdmin(admin) {
-            const db = getDatabase(); const users = db.users.filter(u => u.role !== 'admin'); const reports = db.reports || [];
-            appDiv.innerHTML = `
-                <div class="w-full max-w-5xl glass-card p-6 min-h-[90vh]">
-                    <div class="flex justify-between items-center mb-8 border-b border-gray-700 pb-4">
-                        <h1 class="text-2xl font-bold text-[#e9edef]">PAINEL ADMIN</h1>
-                        <button onclick="logout()" class="text-red-400 font-bold text-xs">SAIR</button>
-                    </div>
-                    <button onclick="toggleMaintenance()" class="w-full mb-8 py-4 rounded-xl font-bold shadow-lg transition-all ${db.maintenance ? 'bg-red-600 text-white' : 'bg-[#00a884] text-[#111b21]'}">${db.maintenance ? 'ABRIR SITE' : 'FECHAR SITE'}</button>
-                    
-                    <div class="mb-8 p-4 bg-[#111b21] rounded-2xl border border-red-900/30">
-                        <h3 class="text-sm font-bold text-red-400 mb-4 uppercase">Denúncias (${reports.length})</h3>
-                        <div class="space-y-3 max-h-60 overflow-y-auto no-scrollbar">
-                            ${reports.length === 0 ? '<p class="text-center text-gray-600 text-sm py-4"><i class="fas fa-check-circle mr-2"></i> A LISTA DE DENÚNCIAS ESTÁ VAZIA</p>' : ''}
-                            ${reports.map((r, i) => `<div class="bg-[#202c33] p-3 rounded-lg border border-red-500/20"><div class="flex justify-between text-xs text-gray-400"><span>${r.reporterName}</span><span>${r.date}</span></div><p class="text-sm text-gray-200 mt-1">${r.description}</p>${r.image?`<button onclick="window.open('${r.image}')" class="text-[#00a884] text-xs underline mt-1">Ver Imagem</button>`:''}<button onclick="delReport(${i})" class="w-full mt-2 bg-red-900/30 text-red-300 text-xs py-1 rounded">Apagar</button></div>`).join('')}
-                        </div>
-                    </div>
+            }, []);
 
-                    <h3 class="text-sm font-bold text-blue-400 mb-3 uppercase">Usuários (${users.length})</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        ${users.map(u => {
-                            let partnerName = 'Nenhum';
-                            if (u.partnerId) { const p = db.users.find(x => x.id === u.partnerId); partnerName = p ? p.name : 'Nenhum'; }
-                            else if (u.partnerDisplay) partnerName = `${u.partnerDisplay.name} (V)`;
+            const saveData = (newUsers, newChats, newSystem) => {
+                if(newUsers) { setUsers(newUsers); localStorage.setItem('users', JSON.stringify(newUsers)); }
+                if(newChats) { setChats(newChats); localStorage.setItem('chats', JSON.stringify(newChats)); }
+                if(newSystem) { setSystem(newSystem); localStorage.setItem('system', JSON.stringify(newSystem)); }
+            };
 
-                            return `
-                            <div class="bg-[#202c33] p-4 rounded-xl border border-gray-700 flex flex-col gap-3 relative">
-                                <div class="flex justify-between items-start">
-                                    <div class="flex gap-3">
-                                        <div class="w-12 h-12 rounded-full bg-gray-700 overflow-hidden shrink-0">
-                                            <img src="${u.photo || `https://api.dicebear.com/7.x/avataaars/svg?seed=${u.name}`}" class="w-full h-full object-cover">
-                                        </div>
-                                        <div>
-                                            <h4 class="font-bold text-[#e9edef] leading-tight">${u.name}</h4>
-                                            <p class="text-[10px] text-gray-500 font-mono">${u.password}</p>
-                                        </div>
-                                    </div>
-                                    <div class="flex flex-col items-end">
-                                        <span class="text-[10px] font-bold ${u.isOnline ? 'text-green-400' : 'text-red-400'}">${u.isOnline ? 'ONLINE' : 'OFFLINE'}</span>
-                                        ${u.banned ? '<span class="text-red-500 font-bold text-[10px]">BANIDO</span>' : ''}
-                                    </div>
-                                </div>
-                                <div class="bg-[#111b21] p-2 rounded text-[10px] text-gray-400 space-y-1">
-                                    <div class="flex justify-between"><span>Entrou:</span><span class="text-white">${formatDate(u.lastLogin)}</span></div>
-                                    <div class="flex justify-between"><span>Saiu:</span><span class="text-white">${formatDate(u.lastLogout)}</span></div>
-                                    <div class="flex justify-between border-t border-gray-700 pt-1 mt-1"><span class="text-blue-400">Parceiro:</span><span class="text-white">${partnerName}</span></div>
-                                </div>
-                                <div class="grid grid-cols-2 gap-2 mt-auto">
-                                    <button onclick="openSpyModal('${u.id}')" class="bg-purple-600 text-white py-2 rounded text-[10px] font-bold col-span-2 hover:bg-purple-500">VER MENSAGENS (ESPIÃO)</button>
-                                    <button onclick="adminRemovePartner('${u.id}')" class="bg-orange-600 text-white py-2 rounded text-[10px] font-bold col-span-2 hover:bg-orange-500">DESFAZER PARCERIA</button>
-                                    <button onclick="openAdminInput('msg', null, '${u.id}')" class="bg-[#00a884] text-[#111b21] py-2 rounded text-[10px] font-bold">AVISAR</button>
-                                    ${!u.banned ? 
-                                        `<button onclick="toggleBan('${u.id}', true)" class="bg-red-600 text-white py-2 rounded text-[10px] font-bold">BANIR</button>` : 
-                                        `<button onclick="toggleBan('${u.id}', false)" class="bg-green-600 text-white py-2 rounded text-[10px] font-bold">SOLTAR</button>`
-                                    }
-                                </div>
-                            </div>`
-                        }).join('')}
+            const notify = (msg, type = 'info') => {
+                const id = generateId();
+                setNotifications(prev => [...prev, { id, msg, type }]);
+                setTimeout(() => setNotifications(prev => prev.filter(n => n.id !== id)), 3000);
+            };
+
+            const addSecurityLog = (type, targetUser, details) => {
+                const newLog = { id: generateId(), type, target: targetUser, details, time: formatFullDate() };
+                const currentSystem = JSON.parse(localStorage.getItem('system')) || { securityLogs: [] };
+                const updatedLogs = [newLog, ...(currentSystem.securityLogs || [])].slice(0, 50); 
+                const updatedSystem = { ...currentSystem, securityLogs: updatedLogs };
+                saveData(null, null, updatedSystem);
+            };
+
+            const handleRegister = (name, pass, email) => {
+                const nameLower = name.toLowerCase().trim();
+                if (ADMIN_NAMES_LOWER.includes(nameLower)) return notify("Nome reservado.", "error");
+                if (users.find(u => u.username.toLowerCase() === nameLower)) return notify("Nome em uso.", "error");
+
+                const now = formatFullDate();
+                const newUser = {
+                    id: generateId(), username: name.trim(), password: pass.trim(), email: email || '',
+                    avatar: null, partner: null, isAdmin: false, isVerified: false, 
+                    plan: 'free', storageUsed: 0, gallery: [], banInfo: null,
+                    createdAt: now, lastLogin: now, lastLogout: null, status: 'online'
+                };
+                saveData([...users, newUser], null, null);
+                setCurrentUser(newUser);
+                setView('app');
+                notify("Conta criada com sucesso!", "success");
+            };
+
+            const handleLogin = (name, pass) => {
+                const nameLower = name.toLowerCase().trim();
+                const passTrim = pass.trim();
+
+                const loginAttempts = JSON.parse(localStorage.getItem('login_attempts')) || {};
+                const userAttempts = loginAttempts[nameLower] || { count: 0, lockUntil: null };
+
+                if (userAttempts.lockUntil && userAttempts.lockUntil > Date.now()) {
+                    const remainingMinutes = Math.ceil((userAttempts.lockUntil - Date.now()) / 60000);
+                    addSecurityLog('hack_attempt', name, `Bloqueado (${remainingMinutes}m)`);
+                    return notify(`Bloqueado por ${remainingMinutes} min.`, "error");
+                }
+
+                if (ADMIN_CREDENTIALS[nameLower] === passTrim) {
+                    const displayName = ADMIN_DISPLAY_NAMES[nameLower];
+                    setCurrentUser({ id: `admin_${nameLower}`, username: displayName, isAdmin: true, avatar: null, isVerified: true });
+                    setView('admin');
+                    notify(`Bem-vindo(a), ${displayName}!`, "success");
+                    return;
+                }
+                
+                if (system.maintenance) { setView('maintenance'); return; }
+
+                const user = users.find(u => u.username.toLowerCase().trim() === nameLower);
+
+                if (!user || user.password !== passTrim) {
+                    userAttempts.count += 1;
+                    if (userAttempts.count >= 5) {
+                        userAttempts.lockUntil = Date.now() + 10 * 60 * 1000; 
+                        userAttempts.count = 0; 
+                        addSecurityLog('security_lock', name, `Bloqueio 10min.`);
+                        localStorage.setItem('login_attempts', JSON.stringify({ ...loginAttempts, [nameLower]: userAttempts }));
+                        return notify("Bloqueado por 10 min.", "error");
+                    }
+                    localStorage.setItem('login_attempts', JSON.stringify({ ...loginAttempts, [nameLower]: userAttempts }));
+                    addSecurityLog('failed_login', name, `Senha incorreta.`);
+                    return notify(`Dados incorretos. (${userAttempts.count}/5)`, "error");
+                }
+
+                if (loginAttempts[nameLower]) {
+                    delete loginAttempts[nameLower];
+                    localStorage.setItem('login_attempts', JSON.stringify(loginAttempts));
+                }
+                
+                if (user.banInfo) {
+                    const now = Date.now();
+                    if (user.banInfo.type === 'eternal' || user.banInfo.until > now) {
+                        setCurrentUser(user);
+                        setView('banned'); 
+                        return;
+                    } else {
+                        user.banInfo = null; 
+                    }
+                }
+
+                const now = formatFullDate();
+                const updatedUsers = users.map(u => u.id === user.id ? { ...u, status: 'online', lastLogin: now } : u);
+                saveData(updatedUsers, null, null);
+                setCurrentUser(updatedUsers.find(u => u.id === user.id));
+                setView('app');
+            };
+
+            const handleLogout = () => {
+                if (currentUser && !currentUser.isAdmin) {
+                    const now = formatFullDate();
+                    const updatedUsers = users.map(u => u.id === currentUser.id ? { ...u, status: 'offline', lastLogout: now } : u);
+                    setUsers(updatedUsers);
+                    localStorage.setItem('users', JSON.stringify(updatedUsers));
+                }
+                setCurrentUser(null);
+                setView('login');
+            };
+
+            const handleReset = () => {
+                if(confirm("Isso apagará TODOS os dados do navegador para corrigir erros. Continuar?")) {
+                    localStorage.clear();
+                    window.location.reload();
+                }
+            };
+
+            const ToastContainer = () => (
+                <div className="fixed top-6 left-0 w-full flex justify-center z-[100] pointer-events-none">
+                    <div className="flex flex-col gap-2 w-auto max-w-xs">
+                        {notifications.map(n => (
+                            <div key={n.id} className={`fade-in-up px-6 py-3 rounded-full shadow-lg font-medium text-sm flex items-center gap-3 ${n.type === 'error' ? 'bg-pink-200 text-pink-900' : 'bg-blue-200 text-blue-900'}`}>
+                                <i className={`fas ${n.type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle'}`}></i>
+                                {n.msg}
+                            </div>
+                        ))}
                     </div>
                 </div>
-            `;
-        }
+            );
 
-        function renderUser(user, tab = 'perfil') {
-            if (chatInterval) { clearInterval(chatInterval); chatInterval = null; }
-            const db = getDatabase();
-            const adminUnread = (user.messages || []).filter(m => !m.read).length;
-            const chatUnread = db.chats.filter(c => c.toId === user.id && !c.read).length;
+            if (view === 'maintenance') return <MaintenanceScreen system={system} />;
+            if (view === 'banned') return <BannedScreen user={currentUser} onLogout={handleLogout} />;
+            if (view === 'login') return <LoginScreen onLogin={handleLogin} onRegister={handleRegister} onReset={handleReset} ToastContainer={ToastContainer} />;
+            if (view === 'admin') return <AdminPanel currentUser={currentUser} users={users} system={system} onLogout={handleLogout} saveData={saveData} notify={notify} ToastContainer={ToastContainer} />;
             
-            appDiv.innerHTML = `
-                <div id="userPanel" class="w-full max-w-4xl h-full flex flex-col md:flex-row gap-4 animate-pop">
-                    <div class="flex-1 glass-card p-6 pb-24 md:pb-6 relative overflow-y-auto h-[85vh] md:h-auto flex flex-col">
-                        <div class="flex justify-between items-center mb-6">
-                            <h2 class="text-2xl font-black text-white uppercase tracking-wide border-b-2 border-[#00a884] pb-1">${tab}</h2>
-                            <button onclick="toggleMsgModal()" class="relative p-2 bg-[#2a3942] rounded-lg">
-                                <i class="fas fa-bell text-[#00a884]"></i>
-                                ${adminUnread > 0 ? `<div class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full text-[10px] flex items-center justify-center font-bold animate-bounce">${adminUnread}</div>` : ''}
-                            </button>
+            // Proteção Anti-Crash
+            if (!currentUser) { setView('login'); return null; }
+
+            return <UserApp currentUser={currentUser} users={users} chats={chats} system={system} onLogout={handleLogout} saveData={saveData} setCurrentUser={setCurrentUser} notify={notify} ToastContainer={ToastContainer} />;
+        }
+
+        // --- COMPONENTE DE NOME COM SELO ---
+        const UserName = ({ user }) => {
+            if (user.isAdmin) {
+                return (
+                    <span className="flex items-center gap-1 font-bold text-[#FFD700] drop-shadow-[0_0_5px_rgba(255,215,0,0.5)]">
+                        {user.username} <i className="fas fa-crown text-xs" title="Administrador"></i>
+                    </span>
+                );
+            }
+            return (
+                <span className="flex items-center gap-1 font-bold text-white">
+                    {user.username} 
+                    {user.isVerified && <i className="fas fa-check-circle text-blue-400 text-xs" title="Verificado"></i>}
+                </span>
+            );
+        };
+
+        // --- TELA DE LOGIN ---
+        function LoginScreen({ onLogin, onRegister, onReset, ToastContainer }) {
+            const [isLogin, setIsLogin] = useState(true);
+            const [form, setForm] = useState({ name: '', pass: '', email: '' });
+
+            return (
+                <div className="h-screen flex flex-col items-center justify-center p-6 relative bg-[#121212]">
+                    <div className="surface-card p-8 w-full max-w-sm relative z-10 fade-in-up text-center">
+                        <div className="mb-8">
+                            <div className="w-16 h-16 gradient-btn rounded-full mx-auto mb-4 flex items-center justify-center shadow-lg shadow-blue-500/30">
+                                <i className="fas fa-infinity text-2xl"></i>
+                            </div>
+                            <h1 className="text-3xl font-bold google-font gradient-text mb-1">Os Mais Mais</h1>
+                            <p className="text-gray-400 text-sm mb-4">Conecte-se com estilo</p>
+                            <div className="flex justify-center"><SupportBadge plan="free" /></div>
                         </div>
-                        <div class="flex-1">${getTabContent(user, tab)}</div>
+                        <div className="space-y-4">
+                            <input type="text" value={form.name} onChange={e => setForm({...form, name: e.target.value})} className="google-input w-full px-6 py-4 text-white placeholder-gray-500 outline-none" placeholder="Nome de usuário" />
+                            {!isLogin && <input type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} className="google-input w-full px-6 py-4 text-white placeholder-gray-500 outline-none" placeholder="Email" />}
+                            <input type="password" value={form.pass} onChange={e => setForm({...form, pass: e.target.value})} className="google-input w-full px-6 py-4 text-white placeholder-gray-500 outline-none" placeholder="Senha" />
+                            <button onClick={() => isLogin ? onLogin(form.name, form.pass) : onRegister(form.name, form.pass, form.email)} className="w-full py-4 rounded-full gradient-btn font-bold text-lg hover:opacity-90 transition-opacity mt-2 shadow-lg">{isLogin ? 'Entrar' : 'Cadastrar'}</button>
+                        </div>
+                        <div className="mt-8 flex flex-col gap-4">
+                            <button onClick={() => setIsLogin(!isLogin)} className="text-sm text-blue-400 hover:text-white font-medium">{isLogin ? 'Criar uma conta' : 'Já tenho uma conta'}</button>
+                            <button onClick={onReset} className="text-xs text-gray-600 hover:text-red-400">Reiniciar Sistema (Limpa erros)</button>
+                        </div>
                     </div>
-                    <div class="fixed bottom-4 left-4 right-4 z-50 bg-[#202c33] border border-gray-700 rounded-2xl shadow-2xl p-2 flex justify-between items-center md:hidden">
-                        <button onclick="renderUser(getCurrentUser(), 'perfil')" class="flex-1 py-3 text-center rounded-xl ${tab=='perfil'?'text-[#00a884] bg-[#2a3942]':'text-gray-500'}"><i class="fas fa-user text-xl"></i></button>
-                        <button onclick="renderUser(getCurrentUser(), 'parceiro')" class="flex-1 py-3 text-center rounded-xl relative ${tab=='parceiro'?'text-[#00a884] bg-[#2a3942]':'text-gray-500'}"><i class="fas fa-heart text-xl"></i>${chatUnread > 0 ? `<div class="absolute top-2 right-2 w-3 h-3 bg-red-600 rounded-full"></div>` : ''}</button>
-                        <button onclick="renderUser(getCurrentUser(), 'suporte')" class="flex-1 py-3 text-center rounded-xl ${tab=='suporte'?'text-[#00a884] bg-[#2a3942]':'text-gray-500'}"><i class="fas fa-headset text-xl"></i></button>
-                        <button onclick="renderUser(getCurrentUser(), 'denunciar')" class="flex-1 py-3 text-center rounded-xl ${tab=='denunciar'?'text-[#00a884] bg-[#2a3942]':'text-gray-500'}"><i class="fas fa-exclamation-triangle text-xl"></i></button>
-                        <button onclick="logout()" class="flex-1 py-3 text-center rounded-xl text-gray-500 hover:text-red-500"><i class="fas fa-sign-out-alt text-xl"></i></button>
-                    </div>
+                    <ToastContainer />
                 </div>
-            `;
-            if (tab === 'parceiro' && user.partnerId && !user.partnerDisplay) {
-                loadChat();
-                chatInterval = setInterval(loadChat, 2000);
-            }
+            );
         }
 
-        function getTabContent(user, tab) {
-            if (tab === 'perfil') return `<div class="flex flex-col items-center mb-6"><div class="w-28 h-28 rounded-full border-4 border-[#00a884] overflow-hidden bg-gray-800 mb-3 relative group"><img src="${user.photo || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name}`}" class="w-full h-full object-cover"><label class="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition cursor-pointer"><i class="fas fa-camera text-2xl"></i><input type="file" class="hidden" onchange="uploadPhoto(this)"></label></div><h3 class="text-2xl font-black text-white">${user.name}</h3></div><div class="space-y-4"><div><label class="text-xs font-bold text-gray-400">EDITAR NOME</label><input id="newName" value="${user.name}" class="solid-input"></div><div><label class="text-xs font-bold text-gray-400">NOVA SENHA</label><input id="newPass" type="password" class="solid-input" placeholder="Nova senha..."></div><button onclick="saveProfile()" class="btn-action w-full mt-2">SALVAR</button></div>`;
-            if (tab === 'parceiro') {
-                if (user.partnerId && !user.partnerDisplay) {
-                    const db = getDatabase(); const p = db.users.find(x => x.id === user.partnerId);
-                    return `<div class="flex flex-col h-[60vh]"><div class="bg-[#202c33] p-3 rounded-t-xl flex justify-between items-center border-b border-gray-700"><div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-[#00a884] overflow-hidden"><img src="${p?.photo||''}" class="w-full h-full"></div><div><h4 class="font-bold text-white">${p?.name}</h4><span class="text-xs text-[#00a884]">Online</span></div></div><button onclick="removePartner()" class="text-red-400 font-bold text-xs bg-red-900/30 px-3 py-1 rounded">SAIR</button></div><div id="chatArea" class="flex-1 bg-black/30 overflow-y-auto p-4 flex flex-col gap-2 border-x border-gray-700"></div><div class="p-2 bg-[#202c33] rounded-b-xl flex gap-2"><input id="chatInput" class="solid-input !py-3 !text-sm" placeholder="Mensagem..."><button onclick="sendChat()" class="bg-[#00a884] text-[#111b21] px-4 rounded-xl"><i class="fas fa-paper-plane"></i></button></div></div>`;
+        // --- APP DO USUÁRIO ---
+        function UserApp({ currentUser, users, chats, system, onLogout, saveData, setCurrentUser, notify, ToastContainer }) {
+            const [tab, setTab] = useState('news'); // INICIA EM NOTÍCIAS
+            const [msg, setMsg] = useState('');
+            const chatEndRef = useRef(null);
+            const [supportStatus, setSupportStatus] = useState({ isOpen: false, text: '', showWarning: false });
+            const [studioModal, setStudioModal] = useState({ open: false, studioName: '', reason: '' });
+
+            const today = new Date();
+            const studioReopenDate = new Date('2026-02-02T06:00:00'); 
+            const isStudio34Open = today >= studioReopenDate;
+
+            useEffect(() => {
+                const checkSupport = () => {
+                    const now = new Date();
+                    const day = now.getDay();
+                    const h = now.getHours();
+                    const isWeekend = day === 0 || day === 6;
+                    const isBusinessHours = !isWeekend && h >= 6 && h < 18;
+                    const isPaidUser = currentUser.plan === 'vip' || currentUser.plan === 'king';
+                    if (isBusinessHours) setSupportStatus({ isOpen: true, text: 'Aberto (06h - 18h)', showWarning: false });
+                    else {
+                        if (isPaidUser) setSupportStatus({ isOpen: true, text: 'Fila de Espera VIP', showWarning: true });
+                        else setSupportStatus({ isOpen: false, text: isWeekend ? 'Fechado (Descanso)' : 'Fechado (Volta 06h)', showWarning: false });
+                    }
+                };
+                checkSupport();
+                const i = setInterval(checkSupport, 60000);
+                return () => clearInterval(i);
+            }, [currentUser.plan]);
+
+            const partner = users.find(u => u.id === currentUser.partner);
+            const chatId = partner ? [currentUser.id, partner.id].sort().join('_') : null;
+            const messages = (chatId && chats[chatId]) ? chats[chatId] : [];
+
+            useEffect(() => { if(chatEndRef.current && tab === 'chat') chatEndRef.current.scrollIntoView({ behavior: 'smooth' }); }, [messages, tab]);
+
+            const handleSend = (e) => {
+                e.preventDefault();
+                if (!msg.trim() || !partner) return;
+                const newMsg = { id: generateId(), senderId: currentUser.id, text: msg, time: formatTime() };
+                const newChats = { ...chats, [chatId]: [...messages, newMsg] };
+                saveData(null, newChats, null);
+                setMsg('');
+            };
+
+            const handleAdd = (targetName) => {
+                const targetLower = targetName.toLowerCase();
+                if (ADMIN_NAMES_LOWER.includes(targetLower)) return notify("Usuário oculto.", "error");
+                const target = users.find(u => u.username.toLowerCase() === targetLower);
+                if (!target) return notify("Usuário não encontrado.", "error");
+                if (target.id === currentUser.id) return notify("Erro de sistema.", "error");
+                const updatedUsers = users.map(u => {
+                    if (u.id === currentUser.id) return { ...u, partner: target.id };
+                    if (u.id === target.id) return { ...u, partner: currentUser.id };
+                    return u;
+                });
+                saveData(updatedUsers, null, null);
+                setCurrentUser(updatedUsers.find(u => u.id === currentUser.id));
+                notify("Conexão estabelecida!", "success");
+                setTab('chat');
+            };
+
+            const handleProfileUpdate = (field, value) => {
+                const updated = { ...currentUser, [field]: value };
+                const list = users.map(u => u.id === currentUser.id ? updated : u);
+                saveData(list, null, null);
+                setCurrentUser(updated);
+                notify("Perfil atualizado.", "success");
+            };
+
+            const handleUpload = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const currentPlan = PLANS[currentUser.plan];
+                if (currentUser.storageUsed + file.size > currentPlan.limit) return notify(`Limite atingido!`, "error");
+                if (file.size > 50000000) return notify("Máximo 50MB (Demo)", "error");
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const newFile = { id: generateId(), name: file.name, data: reader.result, type: file.type };
+                    const updatedUser = { ...currentUser, storageUsed: currentUser.storageUsed + file.size, gallery: [...(currentUser.gallery || []), newFile] };
+                    const list = users.map(u => u.id === currentUser.id ? updatedUser : u);
+                    saveData(list, null, null);
+                    setCurrentUser(updatedUser);
+                    notify("Upload concluído!", "success");
+                };
+                reader.readAsDataURL(file);
+            };
+
+            const upgradePlan = (planKey) => {
+                const plan = PLANS[planKey];
+                let confirmMsg = `Assinar ${plan.name} por R$${plan.price},00?`;
+                if (planKey === 'vip') confirmMsg = `Assinar VIP? O primeiro mês é GRÁTIS! Depois R$ 50,00/mês.`;
+                if(confirm(confirmMsg)) {
+                    const updated = { ...currentUser, plan: planKey };
+                    const list = users.map(u => u.id === currentUser.id ? updated : u);
+                    saveData(list, null, null);
+                    setCurrentUser(updated);
+                    notify(`Plano atualizado para ${plan.name}!`, "success");
                 }
-                return `<div class="text-center py-10"><i class="fas fa-search text-5xl text-gray-500 mb-4"></i><h3 class="text-xl font-bold mb-2">Encontrar Par</h3><p class="text-gray-400 text-sm mb-6">Digita o nome exato.</p><input id="partnerSearch" class="solid-input text-center mb-4" placeholder="Nome do Utilizador"><button onclick="linkPartner()" class="btn-action w-full">CONECTAR</button></div>`;
-            }
-            if (tab === 'suporte') return `<div class="bg-red-900/20 border border-red-500/30 p-4 rounded-xl mb-6 text-center"><h3 class="font-black text-red-400">ADMINISTRAÇÃO OCULTA</h3><p class="text-xs text-gray-300">"Estamos sempre a vigiar."</p></div><textarea id="supportMsg" class="solid-input h-32 mb-4" placeholder="Qual o problema?"></textarea><button onclick="sendSupport()" class="btn-action w-full">ENVIAR</button>`;
-            if (tab === 'denunciar') return `<div class="text-center"><i class="fas fa-shield-alt text-4xl text-red-500 mb-4"></i><h3 class="text-xl font-bold mb-4">Denunciar</h3><textarea id="reportDesc" class="solid-input h-24 mb-4" placeholder="O que aconteceu?"></textarea><label class="block w-full p-4 border-2 border-dashed border-gray-600 rounded-xl mb-4 cursor-pointer hover:border-gray-400 bg-gray-800"><span class="text-xs font-bold text-gray-400">ANEXAR FOTO/PRINT</span><input type="file" class="hidden" accept="image/*" onchange="previewReport(this)"><img id="reportPreview" class="w-full mt-2 rounded hidden"></label><button onclick="sendReport()" class="btn-action w-full bg-red-600">ENVIAR</button></div>`;
+            };
+
+            const submitStudioRequest = () => {
+                const reason = studioModal.reason.toLowerCase();
+                const forbiddenWords = ['ver', 'conhecer', 'visitar', 'passear', 'curiosidade', 'olhar', 'só'];
+                const allowedWords = ['trabalhar', 'ajudar', 'serviço', 'documento', 'entrega', 'reunião', 'job'];
+                const hasForbidden = forbiddenWords.some(word => reason.includes(word));
+                const hasAllowed = allowedWords.some(word => reason.includes(word));
+                if (hasForbidden || !hasAllowed || reason.length < 5) {
+                    notify("ACESSO NEGADO. Motivo inválido.", "error");
+                    return;
+                }
+                const currentStudioName = studioModal.studioName;
+                const currentReason = studioModal.reason;
+                setStudioModal({ open: false, studioName: '', reason: '' });
+                notify("Solicitação enviada para os administradores!", "success");
+                setTimeout(() => {
+                    const subject = `Solicitação de Acesso ao ${currentStudioName}`;
+                    const body = `Olá Administradores,\n\nMotivo do acesso: ${currentReason}\n\nAss: ${currentUser.username}`;
+                    const mailtoLink = `mailto:admin@osmaismais.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                    const link = document.createElement('a');
+                    link.href = mailtoLink;
+                    link.target = "_blank"; link.rel = "noopener noreferrer"; link.style.display = 'none';
+                    document.body.appendChild(link); link.click(); document.body.removeChild(link);
+                }, 1500);
+            };
+
+            const sendSupportMsg = (txt) => {
+                if(!txt.trim()) return;
+                const newSys = { ...system, supportMsgs: [...system.supportMsgs, { id: generateId(), user: currentUser.username, text: txt, time: formatFullDate() }] };
+                saveData(null, null, newSys);
+                notify("Mensagem enviada.", "success");
+            };
+
+            return (
+                <div className="h-screen flex flex-col bg-[#121212] text-[#e3e3e3] relative">
+                    
+                    {/* MODAL DE PORTARIA */}
+                    {studioModal.open && (
+                        <div className="absolute inset-0 z-[100] bg-black/95 flex items-center justify-center p-6 backdrop-blur-sm fade-in-up">
+                            <div className="surface-card p-6 w-full max-w-sm border border-red-500/30 shadow-[0_0_50px_rgba(220,38,38,0.2)]">
+                                <div className="text-center mb-6">
+                                    <div className="w-16 h-16 bg-red-900/30 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-500"><i className="fas fa-user-shield text-2xl text-red-500"></i></div>
+                                    <h3 className="text-xl font-bold text-white mb-1">Controle de Acesso</h3>
+                                    <p className="text-xs text-gray-400">Você está tentando entrar em uma área restrita.</p>
+                                </div>
+                                <label className="text-xs font-bold text-gray-500 uppercase mb-2 block">Motivo da visita</label>
+                                <textarea className="w-full bg-black/50 border border-gray-700 rounded-xl p-4 text-sm text-white outline-none focus:border-red-500 transition-colors h-32 resize-none mb-4" placeholder="Ex: Entregar documentos, realizar serviço..." value={studioModal.reason} onChange={(e) => setStudioModal({...studioModal, reason: e.target.value})}></textarea>
+                                <div className="flex gap-3">
+                                    <button onClick={() => setStudioModal({ open: false, studioName: '', reason: '' })} className="flex-1 py-3 rounded-xl bg-gray-800 text-gray-400 font-bold text-xs hover:bg-gray-700">CANCELAR</button>
+                                    <button onClick={submitStudioRequest} className="flex-1 py-3 rounded-xl bg-red-600 text-white font-bold text-xs hover:bg-red-500 shadow-lg">SOLICITAR</button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
+                    <div className="px-6 py-4 flex justify-between items-center z-20 bg-[#121212] sticky top-0 border-b border-[#2d2d2d]">
+                        <h2 className="google-font font-medium text-xl gradient-text">Os mais mais</h2>
+                        <div className="flex items-center gap-3">
+                            <span className={`text-xs font-bold px-3 py-1 rounded-full bg-[#2d2d2d] ${PLANS[currentUser.plan].color}`}>{currentUser.plan.toUpperCase()}</span>
+                            <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-[#2d2d2d] p-[2px]">
+                                <img src={currentUser.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${currentUser.username}`} className="w-full h-full rounded-full object-cover" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex-1 overflow-y-auto pb-32 p-4">
+                        
+                        {/* NEWS TAB (RESTAURADA) */}
+                        {tab === 'news' && (
+                            <div className="space-y-6">
+                                <div className="flex justify-between items-center">
+                                    <h2 className="text-2xl font-bold google-font gradient-text">Últimas Notícias</h2>
+                                    <span className="text-xs text-gray-500">{system.news ? system.news.length : 0} publicações</span>
+                                </div>
+                                {system.news && system.news.length > 0 ? (
+                                    system.news.map(item => (
+                                        <div key={item.id} className="surface-card p-5 border-l-4 border-blue-500 fade-in-up">
+                                            <h3 className="text-lg font-bold text-white mb-2">{item.title}</h3>
+                                            <p className="text-sm text-gray-300 leading-relaxed whitespace-pre-wrap mb-4">{item.body}</p>
+                                            <div className="flex justify-between items-center text-[10px] text-gray-500 border-t border-white/5 pt-3">
+                                                <span><i className="fas fa-calendar-alt mr-1"></i> {item.date}</span>
+                                                <span className="text-blue-300 font-bold"><i className="fas fa-feather-alt mr-1"></i> {item.author}</span>
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="text-center text-gray-500 py-10 opacity-50">
+                                        <i className="fas fa-newspaper text-4xl mb-3"></i>
+                                        <p>Nenhuma notícia publicada ainda.</p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* CHAT */}
+                        {tab === 'chat' && (
+                            <div className="h-full flex flex-col">
+                                {!partner ? (
+                                    <div className="flex-1 flex flex-col items-center justify-center text-center opacity-60">
+                                        <div className="w-24 h-24 bg-[#2d2d2d] rounded-full flex items-center justify-center mb-4"><i className="fas fa-comment-slash text-3xl text-blue-400"></i></div>
+                                        <h3 className="text-lg google-font mb-2">Nenhuma conversa</h3>
+                                        <button onClick={() => setTab('add')} className="text-pink-400 font-medium hover:text-pink-300">Adicionar alguém</button>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <div className="text-center mb-4"><span className="text-xs bg-[#2d2d2d] px-4 py-2 rounded-full text-blue-300">Conversando com <UserName user={partner} /></span></div>
+                                        <div className="flex-1 space-y-3">
+                                            {messages.map((m, i) => (
+                                                <div key={i} className={`flex ${m.senderId === currentUser.id ? 'justify-end' : 'justify-start'} scale-pop`}>
+                                                    <div className={`max-w-[75%] px-5 py-3 rounded-3xl text-sm ${m.senderId === currentUser.id ? 'gradient-btn' : 'bg-[#2d2d2d] text-gray-200'}`}>{m.text}</div>
+                                                </div>
+                                            ))}
+                                            <div ref={chatEndRef}></div>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                        )}
+
+                        {tab === 'add' && (
+                            <div className="surface-card p-6 mt-4">
+                                <h2 className="text-xl google-font mb-6 text-blue-400">Nova Conexão</h2>
+                                <div className="relative">
+                                    <input id="search" className="google-input w-full px-6 py-4 pl-12 text-white placeholder-gray-500 outline-none" placeholder="Buscar usuário..." />
+                                    <i className="fas fa-search absolute left-5 top-5 text-gray-500"></i>
+                                    <button onClick={() => handleAdd(document.getElementById('search').value)} className="absolute right-2 top-2 bg-pink-500 text-white w-10 h-10 rounded-full flex items-center justify-center hover:scale-105 transition-transform shadow-lg"><i className="fas fa-plus"></i></button>
+                                </div>
+                            </div>
+                        )}
+
+                        {tab === 'profile' && (
+                            <div className="space-y-4">
+                                <div className="surface-card p-6 flex flex-col items-center">
+                                    <div className="relative mb-4">
+                                        <div className="w-28 h-28 rounded-full overflow-hidden border-4 border-[#2d2d2d]"><img src={currentUser.avatar || `https://api.dicebear.com/7.x/initials/svg?seed=${currentUser.username}`} className="w-full h-full object-cover" /></div>
+                                        <label className="absolute bottom-0 right-0 w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center cursor-pointer text-white hover:scale-110 transition-transform shadow-lg"><i className="fas fa-camera"></i><input type="file" accept="image/*" className="hidden" onChange={(e) => { const file = e.target.files[0]; if(file) { const r = new FileReader(); r.onload = () => handleProfileUpdate('avatar', r.result); r.readAsDataURL(file); } }} /></label>
+                                    </div>
+                                    
+                                    <div className="w-full space-y-3">
+                                        <div className="flex justify-center items-center gap-2 mb-2">
+                                            {currentUser.isVerified && <div className="text-center text-xs text-blue-400 font-bold bg-blue-900/30 px-2 py-1 rounded"><i className="fas fa-check-circle"></i> VERIFICADO</div>}
+                                            {currentUser.isAdmin && <div className="text-center text-xs text-yellow-400 font-bold bg-yellow-900/30 px-2 py-1 rounded"><i className="fas fa-crown"></i> ADMINISTRADOR</div>}
+                                        </div>
+
+                                        <input value={currentUser.username} onChange={(e) => handleProfileUpdate('username', e.target.value)} className="w-full bg-transparent border-b border-[#3d3d3d] p-2 text-center text-xl font-bold outline-none focus:border-blue-500 transition-colors" placeholder="Nome" />
+                                        <input value={currentUser.email} onChange={(e) => handleProfileUpdate('email', e.target.value)} className="w-full bg-transparent border-b border-[#3d3d3d] p-2 text-center text-sm text-gray-400 outline-none focus:border-blue-500 transition-colors" placeholder="Email" />
+                                        <input value={currentUser.password} onChange={(e) => handleProfileUpdate('password', e.target.value)} className="w-full bg-transparent border-b border-[#3d3d3d] p-2 text-center text-sm text-gray-400 outline-none focus:border-blue-500 transition-colors" placeholder="Senha" type="text" />
+                                    </div>
+                                </div>
+                                <div className="surface-card p-6">
+                                    <div className="flex justify-between items-center mb-4"><h3 className="google-font font-medium text-pink-400">Arquivos</h3><label className="bg-[#2d2d2d] hover:bg-[#3d3d3d] px-4 py-2 rounded-full text-xs font-bold cursor-pointer transition-colors flex items-center gap-2"><i className="fas fa-cloud-upload-alt text-blue-400"></i> Upload<input type="file" className="hidden" onChange={handleUpload} /></label></div>
+                                    <div className="mb-4"><div className="flex justify-between text-xs text-gray-400 mb-2"><span>{(currentUser.storageUsed / 1024 / 1024).toFixed(1)} MB usados</span><span>{PLANS[currentUser.plan].label}</span></div><div className="h-2 bg-[#2d2d2d] rounded-full overflow-hidden"><div className="h-full bg-gradient-to-r from-blue-500 to-pink-500" style={{ width: `${Math.min((currentUser.storageUsed / PLANS[currentUser.plan].limit) * 100, 100)}%` }}></div></div></div>
+                                    <div className="grid grid-cols-3 gap-2">{(currentUser.gallery || []).map((f, i) => (<div key={i} className="aspect-square bg-[#2d2d2d] rounded-2xl overflow-hidden cursor-pointer hover:opacity-80 transition-opacity relative">{f.type.startsWith('image/') ? (<img src={f.data} className="w-full h-full object-cover" onClick={() => { const w = window.open(""); w.document.write(`<img src="${f.data}" style="width:100%"/>`); }}/>) : (<div className="w-full h-full flex flex-col items-center justify-center text-gray-500"><i className="fas fa-file text-2xl mb-1"></i><span className="text-[9px] truncate w-full text-center px-1">{f.name}</span></div>)}</div>))}{(currentUser.gallery || []).length === 0 && <div className="col-span-3 text-center text-xs text-gray-600 py-4">Galeria vazia</div>}</div>
+                                </div>
+                                <div className="surface-card p-6"><h3 className="google-font font-medium mb-4 text-blue-400">Planos</h3><div className="grid grid-cols-2 gap-3"><button onClick={() => upgradePlan('vip')} className="bg-[#2d2d2d] p-4 rounded-2xl text-left hover:bg-[#353535] border border-transparent hover:border-blue-500 transition-all"><div className="text-blue-400 font-bold">VIP</div><div className="text-xs text-gray-400 mt-1">5 GB</div><div className="text-lg font-bold mt-2 text-green-400">R$ 0,00 <span className="text-[8px] text-gray-500 block">1º mês grátis</span></div></button><button onClick={() => upgradePlan('king')} className="bg-[#2d2d2d] p-4 rounded-2xl text-left hover:bg-[#353535] border border-transparent hover:border-pink-500 transition-all"><div className="text-pink-400 font-bold">KING</div><div className="text-xs text-gray-400 mt-1">40 GB</div><div className="text-lg font-bold mt-2">R$ 100</div></button></div></div>
+                                <button onClick={onLogout} className="w-full py-4 rounded-full bg-[#2d2d2d] text-pink-400 font-bold hover:bg-[#3d3d3d] mb-6 shadow-lg">Sair</button>
+                            </div>
+                        )}
+
+                        {tab === 'menu' && (
+                            <div className="surface-card p-6 pb-20">
+                                <div className="flex justify-between items-center mb-6"><h3 className="google-font font-bold text-lg">Suporte</h3><span className={`text-[10px] px-3 py-1 rounded-full font-bold border ${supportStatus.isOpen ? 'bg-green-900/30 border-green-500 text-green-400' : 'bg-red-900/30 border-red-500 text-red-400'}`}>{supportStatus.text.toUpperCase()}</span></div>
+                                {supportStatus.showWarning && (<div className="bg-orange-900/20 border border-orange-500/50 p-4 rounded-xl mb-4 flex items-start gap-3"><i className="fas fa-clock text-orange-400 mt-1"></i><div><h4 className="text-sm font-bold text-orange-400">Atendimento Offline</h4><p className="text-xs text-gray-300 mt-1 leading-relaxed">Mesmo com o plano VIP, nossa equipe não trabalha após as 18:00 ou fins de semana. Sua mensagem será a primeira a ser respondida no próximo dia útil às 06:00.</p></div></div>)}
+                                {supportStatus.isOpen ? (<div className="space-y-4"><div className="bg-[#2d2d2d] p-4 rounded-2xl"><p className="text-sm text-gray-300 mb-2">Como podemos ajudar?</p><div className="flex gap-2"><input id="supportInput" className="google-input flex-1 px-4 py-3 text-sm text-white outline-none placeholder-gray-500" placeholder="Digite sua mensagem..." /><button onClick={() => { const inp = document.getElementById('supportInput'); sendSupportMsg(inp.value); inp.value = ''; }} className="w-12 h-12 rounded-full gradient-btn flex items-center justify-center"><i className="fas fa-paper-plane"></i></button></div></div></div>) : (<div className="bg-[#2d2d2d] p-6 rounded-2xl text-center"><i className="fas fa-moon text-4xl text-blue-400 mb-4"></i><h4 className="font-bold text-lg mb-2">Suporte Fechado 🔒</h4><p className="text-gray-400 text-sm mb-6">Estamos descansando.<br/>Volta no próximo dia útil às 06:00.</p><button onClick={() => setTab('profile')} className="w-full py-3 rounded-full border border-pink-500 text-pink-400 font-bold hover:bg-pink-900/20">Virar VIP (Fila de Espera)</button></div>)}
+                                <div className="mt-8 pt-6 border-t border-[#2d2d2d]">
+                                    <h4 className="font-bold text-gray-400 mb-4 flex items-center gap-2"><i className="fas fa-map-marker-alt text-pink-500"></i> Nossas Sedes</h4>
+                                    <div className="space-y-3 mb-6">
+                                        <div className="studio-highlight p-4 rounded-2xl relative overflow-hidden group"><div className="absolute top-0 right-0 bg-red-600 text-white text-[9px] font-bold px-2 py-1 rounded-bl-xl"><i className="fas fa-lock"></i> RESTRITO</div><h5 className="text-sm font-bold text-white mb-1 flex items-center gap-2">Estúdio 34 <i className="fas fa-star text-yellow-400 text-xs"></i></h5><p className="text-xs text-gray-300">R. José Gonçalves Paim, 60<br/>Parque Bitaru, São Vicente - SP</p><div className="flex flex-col gap-1 mt-2 border-t border-pink-500/20 pt-2"><span className="text-[10px] text-white font-bold flex items-center gap-1"><i className="fas fa-clock text-yellow-400"></i> Horário: 06:00 às 12:20</span><span className="text-[10px] text-red-400 font-bold uppercase"><i className="fas fa-hand-paper mr-1"></i> Acesso Proibido</span><span className="text-[10px] text-blue-300 flex items-center gap-1"><i className="fas fa-code"></i> Sede da Nossa Parceria</span><span className="text-[9px] text-gray-500 italic">Entrada liberada apenas para Especialistas (Devs).</span></div><div className="absolute inset-0 bg-black/90 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 p-4 text-center backdrop-blur-sm"><i className="fas fa-lock text-3xl text-red-500 mb-2"></i><p className="text-xs text-white font-bold">Área Restrita</p><p className="text-[10px] text-gray-300 mt-1 mb-2">Acesso físico proibido.</p><button onClick={() => setStudioModal({ open: true, studioName: 'Estúdio 34', reason: '' })} className="bg-red-600 border border-red-400 text-white px-3 py-1.5 rounded-full text-[10px] font-bold hover:bg-red-700">Pedir Autorização (E-mail)</button></div></div>
+                                        <div className="bg-[#1a1a1a] p-3 rounded-xl border border-[#2d2d2d] relative overflow-hidden group"><div className="absolute top-2 right-2 text-red-500 text-[10px]"><i className="fas fa-lock"></i></div><h5 className="text-sm font-bold text-white mb-1">Estúdio 54</h5><p className="text-xs text-gray-400">Rua José Benedito Henriques</p><p className="text-[10px] text-red-400 mt-1 flex items-center gap-1 font-bold"><i className="fas fa-user-shield"></i> Apenas Especialistas</p><div className="absolute inset-0 bg-black/90 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 p-4 text-center backdrop-blur-sm"><p className="text-xs text-white font-bold mb-2">Área Restrita</p><button onClick={() => setStudioModal({ open: true, studioName: 'Estúdio 54', reason: '' })} className="bg-red-600/20 border border-red-500 text-red-400 px-3 py-1 rounded-full text-[10px]">Pedir Autorização</button></div></div>
+                                        <div className="bg-[#1a1a1a] p-3 rounded-xl border border-[#2d2d2d] relative overflow-hidden group"><div className="absolute top-2 right-2 text-red-500 text-[10px]"><i className="fas fa-lock"></i></div><h5 className="text-sm font-bold text-white mb-1">Estúdio 76</h5><p className="text-xs text-gray-400">Rua Quinze de Novembro, 661</p><p className="text-[10px] text-red-400 mt-1 flex items-center gap-1 font-bold"><i className="fas fa-user-shield"></i> Apenas Especialistas</p><div className="absolute inset-0 bg-black/90 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10 p-4 text-center backdrop-blur-sm"><p className="text-xs text-white font-bold mb-2">Área Restrita</p><button onClick={() => setStudioModal({ open: true, studioName: 'Estúdio 76', reason: '' })} className="bg-red-600/20 border border-red-500 text-red-400 px-3 py-1 rounded-full text-[10px]">Pedir Autorização</button></div></div>
+                                    </div>
+                                    <div className="bg-[#1a1a1a] p-4 rounded-xl border border-[#2d2d2d] mt-4 mb-4"><h4 className="font-bold text-gray-400 mb-2 flex items-center gap-2"><i className="fas fa-users-slash text-red-400"></i> Equipe Exclusiva</h4><p className="text-xs text-gray-500 leading-relaxed"><strong>Atenção:</strong> Nossa equipe é composta unicamente pelos fundadores. Não estamos contratando e não abrimos vagas.</p><p className="text-[10px] text-blue-400 mt-2 font-mono border-t border-white/5 pt-2">Fim da Gestão Atual: 12/12/2026<br/><span className="text-gray-400">Após esta data, será cobrada taxa de manutenção de <strong>R$ 20,00</strong>.</span></p></div>
+                                    <div className="bg-[#1a1a1a] p-4 rounded-xl border border-[#2d2d2d] mt-4 mb-4"><h4 className="font-bold text-gray-400 mb-2 flex items-center gap-2"><i className="fas fa-scroll text-purple-400"></i> Manifesto</h4><p className="text-xs text-gray-400 italic mb-2">"Nem todas as pessoas ficam para sempre."</p><p className="text-xs text-gray-500 leading-relaxed">Esta é a pedra angular da nossa administração. O Lucas e a Bárbara não são donos do tempo, são arquitetos do presente. Nossa gestão tem um fim: <strong>10 de Dezembro de 2027</strong>.<br/><br/>Nós não vamos abandonar o barco; vamos passá-lo para novas mãos. Nós vamos para outros projetos. O "Os Mais Mais" fica.</p></div>
+                                    <h4 className="font-bold text-gray-400 mb-2 flex items-center gap-2"><i className="fas fa-file-contract"></i> Termos de Uso</h4>
+                                    <div className="text-xs text-gray-500 h-24 overflow-y-auto bg-[#1a1a1a] p-3 rounded-xl leading-relaxed">1. Respeito Mútuo: Trate todos com dignidade.<br/>2. Segurança: Não compartilhe dados sensíveis.<br/>3. Conteúdo: Proibido material ilícito.<br/>4. Penalidades: Infrações resultam em banimento.<br/>5. Suporte: Grátis (Seg-Sex 06h-18h). Fim de semana: Fechado.<br/>6. Dados: Suas mensagens são criptografadas.</div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {tab === 'chat' && partner && (
+                        <div className="fixed bottom-24 left-4 right-4 z-40">
+                            <form onSubmit={handleSend} className="bg-[#1E1E1E] p-2 rounded-full flex gap-2 shadow-lg border border-[#2d2d2d]">
+                                <input value={msg} onChange={e => setMsg(e.target.value)} className="flex-1 bg-transparent px-4 outline-none text-white placeholder-gray-500" placeholder="Mensagem..." />
+                                <button className="w-10 h-10 rounded-full gradient-btn flex items-center justify-center hover:scale-105 transition-transform"><i className="fas fa-paper-plane text-xs"></i></button>
+                            </form>
+                        </div>
+                    )}
+
+                    <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-[#2C2C2C] px-6 py-3 rounded-full flex items-center gap-8 shadow-2xl z-50 border border-[#3d3d3d]">
+                        <button onClick={() => setTab('news')} className={`text-2xl transition-all ${tab === 'news' ? 'text-blue-400 scale-125' : 'text-gray-500 hover:text-gray-300'}`}><i className="fas fa-newspaper"></i></button>
+                        <button onClick={() => setTab('chat')} className={`text-2xl transition-all ${tab === 'chat' ? 'text-blue-400 scale-125' : 'text-gray-500 hover:text-gray-300'}`}><i className="fas fa-comment"></i></button>
+                        <button onClick={() => setTab('add')} className={`text-2xl transition-all ${tab === 'add' ? 'text-pink-400 scale-125' : 'text-gray-500 hover:text-gray-300'}`}><i className="fas fa-plus-circle"></i></button>
+                        <button onClick={() => setTab('profile')} className={`text-2xl transition-all ${tab === 'profile' ? 'text-blue-400 scale-125' : 'text-gray-500 hover:text-gray-300'}`}><i className="fas fa-user-circle"></i></button>
+                        <button onClick={() => setTab('menu')} className={`text-2xl transition-all ${tab === 'menu' ? 'text-pink-400 scale-125' : 'text-gray-500 hover:text-gray-300'}`}><i className="fas fa-bars"></i></button>
+                    </div>
+                    
+                    <ToastContainer />
+                </div>
+            );
         }
 
-        init();
+        // --- PAINEL ADMIN ---
+        function AdminPanel({ currentUser, users, system, onLogout, saveData, notify, ToastContainer }) {
+            const [page, setPage] = useState('news');
+            const [newsTitle, setNewsTitle] = useState('');
+            const [newsBody, setNewsBody] = useState('');
+
+            const toggleBan = (id, type) => {
+                let until = 0;
+                if(type === '24h') until = Date.now() + 86400000;
+                if(type === '7d') until = Date.now() + (86400000 * 7);
+                if(type === 'eternal') until = 9999999999999;
+                const updated = users.map(u => u.id === id ? { ...u, banInfo: type ? { type, until } : null } : u);
+                saveData(updated, null, null);
+                notify("Status alterado.", "success");
+            };
+
+            const toggleVerify = (id) => {
+                const updated = users.map(u => u.id === id ? { ...u, isVerified: !u.isVerified } : u);
+                saveData(updated, null, null);
+                notify("Selo atualizado.", "success");
+            };
+
+            const toggleMaintenance = (type) => {
+                const newSys = { ...system, maintenance: !system.maintenance, maintenanceType: type || 'emergency' };
+                saveData(null, null, newSys);
+                notify(newSys.maintenance ? "Bloqueio ATIVADO." : "Bloqueio DESATIVADO.", "info");
+            };
+
+            const postNews = () => {
+                if (!newsTitle || !newsBody) return notify("Preencha título e texto.", "error");
+                const newArticle = { id: generateId(), title: newsTitle, body: newsBody, date: formatFullDate(), author: currentUser.username };
+                const newSys = { ...system, news: [newArticle, ...(system.news || [])] };
+                saveData(null, null, newSys);
+                setNewsTitle('');
+                setNewsBody('');
+                notify("Notícia publicada!", "success");
+            };
+
+            const deleteNews = (id) => {
+                const newSys = { ...system, news: system.news.filter(n => n.id !== id) };
+                saveData(null, null, newSys);
+                notify("Notícia apagada.", "success");
+            };
+
+            return (
+                <div className="h-screen flex flex-col bg-[#121212] text-white">
+                    <div className="p-6 border-b border-[#2d2d2d] flex justify-between items-center bg-[#1E1E1E]"><h1 className="google-font font-bold text-lg text-blue-400">Painel Admin</h1><button onClick={onLogout} className="text-xs font-bold text-white gradient-btn px-4 py-2 rounded-full hover:opacity-90">SAIR</button></div>
+                    <div className="flex p-4 gap-2 overflow-x-auto"><button onClick={() => setPage('users')} className={`flex-1 py-3 px-2 rounded-full text-xs font-bold ${page === 'users' ? 'gradient-btn' : 'bg-[#2d2d2d] text-gray-400'}`}>Usuários</button><button onClick={() => setPage('news')} className={`flex-1 py-3 px-2 rounded-full text-xs font-bold ${page === 'news' ? 'gradient-btn' : 'bg-[#2d2d2d] text-gray-400'}`}>Notícias</button><button onClick={() => setPage('monitor')} className={`flex-1 py-3 px-2 rounded-full text-xs font-bold ${page === 'monitor' ? 'gradient-btn' : 'bg-[#2d2d2d] text-gray-400'}`}>Monitor</button><button onClick={() => setPage('sys')} className={`flex-1 py-3 px-2 rounded-full text-xs font-bold ${page === 'sys' ? 'gradient-btn' : 'bg-[#2d2d2d] text-gray-400'}`}>Sistema</button></div>
+                    <div className="flex-1 overflow-y-auto p-4 space-y-3">
+                        {page === 'news' && (<div className="space-y-6"><div className="surface-card p-6"><h3 className="font-bold text-lg mb-4 text-blue-400">Publicar Notícia</h3><input className="google-input w-full px-4 py-3 mb-3 text-sm text-white placeholder-gray-500 outline-none" placeholder="Título da Manchete" value={newsTitle} onChange={e => setNewsTitle(e.target.value)} /><textarea className="w-full bg-[#2d2d2d] rounded-xl p-4 text-sm text-white outline-none mb-3 h-32 resize-none" placeholder="Conteúdo da notícia..." value={newsBody} onChange={e => setNewsBody(e.target.value)}></textarea><button onClick={postNews} className="w-full py-3 rounded-full gradient-btn font-bold text-sm shadow-lg">PUBLICAR AGORA</button></div><div className="space-y-3"><h4 className="text-xs font-bold text-gray-500 uppercase ml-1">Notícias Ativas</h4>{system.news && system.news.map(item => (<div key={item.id} className="surface-card p-4 border-l-4 border-blue-500 relative"><button onClick={() => deleteNews(item.id)} className="absolute top-2 right-2 text-red-500 hover:text-red-300"><i className="fas fa-trash"></i></button><div className="font-bold text-white pr-6">{item.title}</div><div className="text-[10px] text-gray-500 mb-2">{item.date} por {item.author}</div><div className="text-xs text-gray-400 line-clamp-2">{item.body}</div></div>))}</div></div>)}
+                        {page === 'users' && users.filter(u => !u.isAdmin).map(u => {
+                            const isBanned = !!u.banInfo;
+                            const banType = u.banInfo?.type;
+                            return (<div key={u.id} className="surface-card p-6"><div className="flex justify-between items-start mb-3"><div><div className="font-bold text-lg text-white flex items-center gap-1">{u.username} {u.isVerified && <i className="fas fa-check-circle text-blue-400 text-xs" title="Verificado"></i>}</div><div className="text-xs text-gray-400">Email: {u.email || 'Sem email'}</div><div className="text-xs text-gray-400">Senha: {u.password}</div></div><div className="flex flex-col items-end"><span className={`text-[10px] font-bold px-2 py-1 rounded-full mb-1 ${u.status === 'online' ? 'bg-green-900 text-green-300' : 'bg-gray-700 text-gray-400'}`}>{u.status.toUpperCase()}</span><button onClick={() => toggleVerify(u.id)} className={`text-[10px] px-2 py-1 rounded border ${u.isVerified ? 'border-red-500 text-red-400' : 'border-blue-500 text-blue-400'}`}>{u.isVerified ? 'TIRAR SELO ❌' : 'DAR SELO ✅'}</button></div></div><div className="bg-[#121212] p-3 rounded-xl mb-4 border border-[#2d2d2d] text-[10px] text-gray-400 font-mono space-y-1"><div className="flex justify-between"><span>📅 Criado em:</span><span className="text-blue-300">{u.createdAt}</span></div><div className="flex justify-between"><span>👀 Visto por último:</span><span className="text-pink-300">{u.lastLogin || '-'}</span></div></div><div className="flex gap-2"><button onClick={() => toggleBan(u.id, null)} className={`flex-1 py-2 rounded-full text-xs font-bold ${!isBanned ? 'bg-green-600 text-white shadow-lg' : 'bg-[#2d2d2d] text-green-400 border border-green-500/30'}`}>{isBanned ? 'DESBANIR' : 'LIVRE'}</button><button onClick={() => toggleBan(u.id, '24h')} className={`flex-1 py-2 rounded-full text-xs font-bold ${banType === '24h' ? 'bg-yellow-600 text-white shadow-lg' : 'bg-[#2d2d2d] text-yellow-400 border border-yellow-500/30'}`}>24H</button><button onClick={() => toggleBan(u.id, '7d')} className={`flex-1 py-2 rounded-full text-xs font-bold ${banType === '7d' ? 'bg-orange-600 text-white shadow-lg' : 'bg-[#2d2d2d] text-orange-400 border border-orange-500/30'}`}>7D</button><button onClick={() => toggleBan(u.id, 'eternal')} className={`flex-1 py-2 rounded-full text-xs font-bold ${banType === 'eternal' ? 'bg-red-600 text-white shadow-lg' : 'bg-[#2d2d2d] text-red-400 border border-red-500/30'}`}>ETENO</button></div></div>);
+                        })}
+                        {page === 'monitor' && (<div className="space-y-4"><h3 className="text-xs font-bold text-gray-500 uppercase ml-1">Mensagens de Suporte</h3>{system.supportMsgs.length === 0 ? (<div className="text-center text-gray-600 text-xs py-4">Nenhuma mensagem recente.</div>) : (system.supportMsgs.map(msg => (<div key={msg.id} className="surface-card p-4 border border-[#2d2d2d]"><div className="flex justify-between text-xs mb-1"><span className="text-blue-400 font-bold">{msg.user}</span><span className="text-gray-500">{msg.time}</span></div><p className="text-sm text-gray-300">{msg.text}</p></div>)))}</div>)}
+                        {page === 'sys' && (<div className="surface-card p-8"><h3 className="font-bold mb-6 text-blue-300 text-xl text-center">Modo de Manutenção</h3>{system.maintenance ? (<div className="text-center"><div className="mb-4 text-red-400 font-bold animate-pulse">O SITE ESTÁ FECHADO ({MAINTENANCE_TYPES[system.maintenanceType].label})</div><button onClick={() => toggleMaintenance()} className="w-full py-4 rounded-full font-bold text-lg bg-green-600 text-white shadow-lg">REABRIR SITE AGORA</button></div>) : (<div className="grid grid-cols-1 gap-3">{Object.entries(MAINTENANCE_TYPES).map(([key, type]) => (<button key={key} onClick={() => toggleMaintenance(key)} className="w-full py-3 px-4 rounded-xl bg-[#2d2d2d] hover:bg-[#353535] flex items-center gap-3 transition-colors text-left group border border-transparent hover:border-blue-500"><div className={`w-10 h-10 rounded-full bg-[#1E1E1E] flex items-center justify-center ${type.color} group-hover:scale-110 transition-transform`}><i className={`fas ${type.icon}`}></i></div><div><div className="text-sm font-bold text-white">{type.label}</div></div></button>))}</div>)}</div>)}
+                    </div>
+                    <ToastContainer />
+                </div>
+            );
+        }
+
+        function MaintenanceScreen({ system }) {
+            const type = MAINTENANCE_TYPES[system.maintenanceType] || MAINTENANCE_TYPES.emergency;
+            return (<div className="h-screen flex flex-col items-center justify-center bg-[#121212] text-white p-10 text-center relative overflow-hidden"><div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 ${type.color.replace('text-', 'bg-')}/10 rounded-full blur-[100px] animate-pulse`}></div><div className="relative z-10 surface-card p-10 border border-white/5"><i className={`fas ${type.icon} text-6xl ${type.color} mb-6 animate-bounce`}></i><h1 className="text-2xl font-bold mb-4 google-font text-white uppercase">Volte mais tarde</h1><p className="text-gray-400 text-lg">Estamos em manutenção</p><div className="mt-8 text-[10px] text-gray-600 font-mono">Motivo: {type.label}</div></div></div>);
+        }
+
+        function BannedScreen({ user, onLogout }) {
+            const [appealText, setAppealText] = useState('');
+            const [sent, setSent] = useState(false);
+            const handleAppeal = () => { if (!appealText.trim()) return alert("Escreva algo."); setSent(true); };
+            return (<div className="h-screen w-screen bg-black flex flex-col items-center justify-center p-6 text-white relative overflow-hidden"><div className="absolute inset-0 bg-red-900/20 z-0"></div><div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-red-600/30 rounded-full blur-[120px] animate-pulse z-0"></div><div className="relative z-10 w-full max-w-sm text-center"><div className="w-32 h-32 bg-red-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-[0_0_50px_rgba(220,38,38,0.5)] prison-pulse border-4 border-red-800"><i className="fas fa-lock text-5xl text-black"></i></div><h1 className="text-3xl font-bold mb-2 uppercase tracking-widest text-red-500">Bloqueado</h1><p className="text-gray-400 text-sm mb-8">Sua conta foi detida por violar as regras.<br/>Acesso proibido.</p>{!sent ? (<div className="bg-[#1a1a1a] border border-red-900/50 p-6 rounded-2xl mb-4 text-left"><h3 className="text-red-400 font-bold text-sm mb-2 uppercase flex items-center gap-2"><i className="fas fa-hand-paper"></i> Segunda Chance?</h3><textarea className="w-full bg-black/50 border border-gray-700 rounded-lg p-3 text-sm text-white outline-none focus:border-red-500 transition-colors h-24 resize-none mb-3" placeholder="Justifique seu erro..." value={appealText} onChange={(e) => setAppealText(e.target.value)}></textarea><button onClick={handleAppeal} className="w-full py-3 rounded-lg bg-red-700 hover:bg-red-600 text-white font-bold text-sm transition-colors uppercase tracking-wide shadow-lg">Enviar Pedido</button></div>) : (<div className="bg-green-900/20 border border-green-500/30 p-6 rounded-2xl mb-6"><i className="fas fa-check-circle text-4xl text-green-500 mb-2"></i><h3 className="font-bold text-green-400 mb-2">Pedido Enviado</h3><div className="text-xs text-gray-300 space-y-2 text-left bg-black/40 p-3 rounded"><p>⏳ <strong>Prazo de Análise:</strong></p><ul className="list-disc pl-4 space-y-1"><li>Caso Simples: <span className="text-yellow-400">~7 dias</span></li><li>Caso Grave: <span className="text-red-400">1 a 2 meses</span></li></ul></div></div>)}<button onClick={onLogout} className="text-gray-500 text-xs hover:text-white underline mt-4">Sair e Voltar para Login</button></div></div>);
+        }
+
+        const SupportBadge = ({ plan }) => {
+            const [status, setStatus] = useState({ open: false, label: '...', sub: '' });
+            useEffect(() => {
+                const update = () => {
+                    const now = new Date();
+                    const day = now.getDay();
+                    const h = now.getHours();
+                    const isWeekend = day === 0 || day === 6;
+                    const isOpen = !isWeekend && h >= 6 && h < 18;
+                    const isPaid = plan === 'vip' || plan === 'king';
+                    if (isOpen) { setStatus({ open: true, label: 'Online', sub: `Fecha 18h` }); } else { if (isWeekend) { setStatus({ open: isPaid, label: isPaid ? 'Fila VIP' : 'Descanso', sub: isPaid ? 'Prioridade' : 'Volta Seg 06h' }); } else { setStatus({ open: isPaid, label: isPaid ? 'Fila VIP' : 'Offline', sub: isPaid ? 'Prioridade' : 'Volta 06h' }); } }
+                };
+                update();
+                const i = setInterval(update, 60000);
+                return () => clearInterval(i);
+            }, [plan]);
+            return (<div className={`flex items-center gap-3 px-4 py-2 rounded-full border backdrop-blur-md transition-all ${status.open ? 'bg-green-500/10 border-green-500/20' : 'bg-pink-500/10 border-pink-500/20'}`}><div className={`w-2 h-2 rounded-full ${status.open ? 'bg-green-400' : 'bg-pink-500'}`}></div><div className="flex flex-col leading-none"><span className={`text-[10px] font-black uppercase ${status.open ? 'text-green-300' : 'text-pink-300'}`}>SUPORTE {status.label}</span><span className="text-[9px] text-gray-400 font-mono mt-0.5">{status.sub}</span></div></div>);
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
     </script>
 </body>
 </html>
